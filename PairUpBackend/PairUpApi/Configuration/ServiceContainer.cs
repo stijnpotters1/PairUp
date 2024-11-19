@@ -32,7 +32,7 @@ public static class ServiceContainer
         //todo add scoped threading scrape service
 
         // Scoped custom services (Dependency injection for services and repositories)
-        services.AddScoped<IService, ActivityService>();
+        services.AddScoped<IActivityService, ActivityService>();
         services.AddScoped<IActivityRepository, ActivityRepository>();
 
         return services;
