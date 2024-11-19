@@ -14,11 +14,11 @@
 
     <ItemGroup>
       <Folder Include="Configuration\" />
-      <Folder Include="Controller\" />
+      <Folder Include="Controllers\" />
       <Folder Include="DTO\" />
       <Folder Include="Exceptions\" />
-      <Folder Include="Model\" />
-      <Folder Include="Repository\" />
+      <Folder Include="Entity\" />
+      <Folder Include="Repositories\" />
       <Folder Include="Service\" />
     </ItemGroup>
 
