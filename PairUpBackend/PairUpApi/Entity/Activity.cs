@@ -16,7 +16,8 @@ public class Activity
     [StringLength(255)] 
     public string Url { get; set; } = null!;
 
-    public double Price { get; set; }
+    [StringLength(255)] 
+    public string Price { get; set; } = null!;
 
     [StringLength(255)]
     public string Age { get; set; } = null!;
