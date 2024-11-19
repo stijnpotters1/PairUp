@@ -9,5 +9,6 @@ public class ActivityResponse
     public string Price { get; set; } = null!;
     public string Age { get; set; } = null!;
     public string Duration { get; set; } = null!;
+    public CategoryResponse Category { get; set; } = new CategoryResponse();
     public PlaceResponse Place { get; set; } = new PlaceResponse();
 }
