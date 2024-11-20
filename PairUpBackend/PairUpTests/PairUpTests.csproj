@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+        <LangVersion>11</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="coverlet.collector" Version="6.0.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+        <PackageReference Include="xunit" Version="2.6.6" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.5.6" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Using Include="Xunit" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\PairUpApi\PairUpApi.csproj" />
+      <ProjectReference Include="..\PairUpCore\PairUpCore.csproj" />
+      <ProjectReference Include="..\PairUpInfrastructure\PairUpInfrastructure.csproj" />
+      <ProjectReference Include="..\PairUpScraper\PairUpScraper.csproj" />
+      <ProjectReference Include="..\PairUpShared\PairUpShared.csproj" />
+    </ItemGroup>
+
+</Project>
