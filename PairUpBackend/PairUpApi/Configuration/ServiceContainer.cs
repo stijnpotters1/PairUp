@@ -26,11 +26,13 @@ public static class ServiceContainer
         // Automapper Configuration
         services.ConfigureMapping();
         
-        //todo add scoped threading scrape service
+        // Register Background Service (Scraper)
+        services.AddHostedService<ScraperBackgroundService>();
 
         // Scoped custom services (Dependency injection for services and repositories)
         services.AddScoped<IActivityService, ActivityService>();
         services.AddScoped<IActivityRepository, ActivityRepository>();
+        services.AddScoped<IWebScraper, TripAdvisorScraper>();
 
         return services;
     }

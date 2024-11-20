@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using PairUpInfrastructure.Data;
 
 #nullable disable
 
@@ -21,7 +22,7 @@ namespace PairUpInfrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("PairUpApi.Entity.Activity", b =>
+            modelBuilder.Entity("PairUpCore.Models.Activity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -42,15 +43,24 @@ namespace PairUpInfrastructure.Migrations
 
                     b.Property<string>("Duration")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("FullAddress")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("double precision");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
-
-                    b.Property<Guid>("PlaceId")
-                        .HasColumnType("uuid");
 
                     b.Property<string>("Price")
                         .IsRequired()
@@ -66,13 +76,10 @@ namespace PairUpInfrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("PlaceId")
-                        .IsUnique();
-
                     b.ToTable("activity");
                 });
 
-            modelBuilder.Entity("PairUpApi.Entity.Category", b =>
+            modelBuilder.Entity("PairUpCore.Models.Category", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -88,51 +95,15 @@ namespace PairUpInfrastructure.Migrations
                     b.ToTable("category");
                 });
 
-            modelBuilder.Entity("PairUpApi.Entity.Place", b =>
+            modelBuilder.Entity("PairUpCore.Models.Activity", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("FullAddress")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)");
-
-                    b.Property<double>("Latitude")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("Longitude")
-                        .HasColumnType("double precision");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("place");
-                });
-
-            modelBuilder.Entity("PairUpApi.Entity.Activity", b =>
-                {
-                    b.HasOne("PairUpApi.Entity.Category", "Category")
+                    b.HasOne("PairUpCore.Models.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PairUpApi.Entity.Place", "Place")
-                        .WithOne("Activity")
-                        .HasForeignKey("PairUpApi.Entity.Activity", "PlaceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Category");
-
-                    b.Navigation("Place");
-                });
-
-            modelBuilder.Entity("PairUpApi.Entity.Place", b =>
-                {
-                    b.Navigation("Activity")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
