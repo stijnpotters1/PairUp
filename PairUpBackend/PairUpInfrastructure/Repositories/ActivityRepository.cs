@@ -14,13 +14,10 @@ public class ActivityRepository : IActivityRepository
     {
         var query = BuildQuery(requirements);
 
-        // Get the total count of activities before pagination
         var totalCount = await GetTotalCount(query);
 
-        // Apply pagination to the query
         var activities = await ApplyPagination(query, requirements);
 
-        // Perform distance filtering on the client side after fetching data from DB
         var filteredActivities = FilterActivitiesByDistance(activities, requirements.Latitude, requirements.Longitude, requirements.Radius);
 
         return new PagedActivityResponse<Activity>
@@ -36,10 +33,8 @@ public class ActivityRepository : IActivityRepository
     {
         var query = _context.Activities
             .Include(a => a.Category)
-            .Include(a => a.Place)
             .AsQueryable();
 
-        // Apply category filter (still done at the DB level)
         query = ApplyCategoryFilter(query, requirements.Categories);
 
         return query;
@@ -55,11 +50,10 @@ public class ActivityRepository : IActivityRepository
         return query;
     }
 
-    // This method is moved to the client side
     private List<Activity> FilterActivitiesByDistance(List<Activity> activities, double userLatitude, double userLongitude, int radius)
     {
         return activities.Where(a =>
-            CalculateDistance(userLatitude, userLongitude, a.Place.Latitude, a.Place.Longitude) <= radius).ToList();
+            CalculateDistance(userLatitude, userLongitude, a.Latitude, a.Longitude) <= radius).ToList();
     }
 
     private double CalculateDistance(double userLatitude, double userLongitude, double activityLatitude, double activityLongitude)

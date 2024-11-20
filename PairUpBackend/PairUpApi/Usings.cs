@@ -10,6 +10,10 @@ global using PairUpCore.Models;
 global using PairUpCore.DTO.Requests;
 global using PairUpCore.DTO.Responses;
 
+global using PairUpScraper;
+global using PairUpScraper.Interfaces;
+global using PairUpScraper.Scrapers;
+
 global using PairUpShared.Middleware;
 
 global using Microsoft.EntityFrameworkCore;
