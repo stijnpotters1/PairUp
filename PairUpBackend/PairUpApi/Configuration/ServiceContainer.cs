@@ -1,7 +1,4 @@
-﻿using PairUpApi.Repositories;
-using PairUpApi.Service;
-
-namespace PairUpApi.Configuration;
+﻿namespace PairUpApi.Configuration;
 
 public static class ServiceContainer
 {

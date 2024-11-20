@@ -1,5 +1,4 @@
-﻿
-namespace PairUpApi.Service;
+﻿namespace PairUpApi.Service;
 
 public class ActivityService : IActivityService
 {
