@@ -22,13 +22,17 @@ public class Activity
     [StringLength(255)]
     public string Age { get; set; } = null!;
 
+    [StringLength(255)]
     public string Duration { get; set; } = null!;
+    
+    [StringLength(255)]
+    public string FullAddress { get; set; } = null!;
+    
+    public double Latitude { get; set; }
+    
+    public double Longitude { get; set; }
     
     public Guid CategoryId { get; set; }
 
     public Category Category { get; set; } = null!;
-    
-    public Guid PlaceId { get; set; }
-
-    public Place Place { get; set; } = null!;
 }

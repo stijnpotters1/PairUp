@@ -7,5 +7,5 @@ public class DataContext : DbContext
     }
     
     public DbSet<Activity> Activities { get; set; }
-    public DbSet<Place> Places { get; set; }
+    public DbSet<Category> Categories { get; set; }
 }
