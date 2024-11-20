@@ -14,11 +14,19 @@ public class ActivityController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<IEnumerable<ActivityResponse>>> GetActivities(
+    public async Task<ActionResult<PagedActivityResponse<ActivityResponse>>> GetActivities(
         [FromBody] ActivityRequest requirements)
     {
-        IEnumerable<Activity> activities = await _repository.GetActivitiesAsync(requirements);
-        IEnumerable<ActivityResponse> activityResponses = activities.Select(ac => _service.ConvertToResponse(ac));
-        return Ok(activityResponses);
+        PagedActivityResponse<Activity> activities = await _repository.GetActivitiesAsync(requirements);
+
+        var activityResponse = new PagedActivityResponse<ActivityResponse>
+        {
+            Items = _service.ConvertToResponse(activities.Items),
+            TotalCount = activities.TotalCount,
+            PageNumber = activities.PageNumber,
+            PageSize = activities.PageSize
+        };
+
+        return Ok(activityResponse);
     }
 }
