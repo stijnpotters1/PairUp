@@ -9,8 +9,13 @@ public class ActivityService : IActivityService
         _mapper = mapper;
     }
     
-    public ActivityResponse ConvertToResponse(Activity activity)
+    private ActivityResponse ConvertToResponse(Activity activity)
     {
         return _mapper.Map<ActivityResponse>(activity);
+    }
+
+    public IEnumerable<ActivityResponse> ConvertToResponse(IEnumerable<Activity> activities)
+    {
+        return activities.Select(ConvertToResponse);
     }
 }

@@ -2,5 +2,5 @@
 
 public interface IActivityService
 {
-    ActivityResponse ConvertToResponse(Activity activity);
+    IEnumerable<ActivityResponse> ConvertToResponse(IEnumerable<Activity> activities);
 }

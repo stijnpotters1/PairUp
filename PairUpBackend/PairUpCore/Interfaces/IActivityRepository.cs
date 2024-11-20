@@ -2,5 +2,5 @@
 
 public interface IActivityRepository
 {
-    Task<IEnumerable<Activity>> GetActivitiesAsync(ActivityRequest requirements);
+    Task<PagedActivityResponse<Activity>> GetActivitiesAsync(ActivityRequest requirements);
 }
