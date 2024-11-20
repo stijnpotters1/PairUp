@@ -16,16 +16,15 @@ this is a application that allows users to search for activities based on their 
 5. Make a .env file locally int the root directory of the PairUpApi project
 6. Paste your connection string in here, that looks like: ```DB_CONNECTION_STRING="Server=database_server;Port=database_port;Database=database_name;Username=database_user;Password=database_password"```
 7. Open the terminal
-8. Execute ```cd PairUpApi```
-9. Execute ```dotnet ef database update```
-10. Run the backend by clicking on the run configuration: ```PairUpApi:https```
+8. Execute ```dotnet ef database update --project .\PairUpInfrastructure --startup-project .\PairUpApi```
+9. Run the backend by clicking on the run configuration: ```PairUpApi:https```
  
 ### Frontend
-11. Open your IDE that is compatible with React
-12. Open the frontend project in here
-13. Open the terminal
-14. Execute ```npm install```
-15. Execute ```npm run dev```
+10. Open your IDE that is compatible with React
+11. Open the frontend project in here
+12. Open the terminal
+13. Execute ```npm install```
+14. Execute ```npm run dev```
 
 ### Completed?
 Once you are completed you can reach out to your local hosted application by browsing to ```http://localhost:5173``` 

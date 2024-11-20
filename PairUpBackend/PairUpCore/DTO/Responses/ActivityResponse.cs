@@ -9,6 +9,8 @@ public class ActivityResponse
     public string Price { get; set; } = null!;
     public string Age { get; set; } = null!;
     public string Duration { get; set; } = null!;
+    public string FullAddress { get; set; } = null!;
+    public double Latitude { get; set; }
+    public double Longitude { get; set; }
     public CategoryResponse Category { get; set; } = new CategoryResponse();
-    public PlaceResponse Place { get; set; } = new PlaceResponse();
 }
