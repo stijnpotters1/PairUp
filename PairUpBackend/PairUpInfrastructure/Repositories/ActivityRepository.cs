@@ -32,7 +32,8 @@ public class ActivityRepository : IActivityRepository
     private IQueryable<Activity> BuildQuery(ActivityRequest requirements)
     {
         var query = _context.Activities
-            .Include(a => a.Category)
+            .Include(a => a.ActivityCategories)
+            .ThenInclude(ac => ac.Category)
             .AsQueryable();
 
         query = ApplyCategoryFilter(query, requirements.Categories);
@@ -40,11 +41,13 @@ public class ActivityRepository : IActivityRepository
         return query;
     }
 
+
     private IQueryable<Activity> ApplyCategoryFilter(IQueryable<Activity> query, ICollection<string>? categories)
     {
         if (categories?.Any() == true)
         {
-            query = query.Where(a => categories.Contains(a.Category.Name));
+            query = query.Where(a => a.ActivityCategories
+                .Any(ac => categories.Contains(ac.Category.Name)));
         }
 
         return query;

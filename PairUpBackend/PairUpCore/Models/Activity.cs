@@ -32,7 +32,5 @@ public class Activity
     
     public double Longitude { get; set; }
     
-    public Guid CategoryId { get; set; }
-
-    public Category Category { get; set; } = null!;
+    public ICollection<ActivityCategories> ActivityCategories { get; set; } = null!;
 }
