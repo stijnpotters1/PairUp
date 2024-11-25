@@ -7,6 +7,6 @@ public class DataContext : DbContext
     }
     
     public DbSet<Activity> Activities { get; set; }
-    public DbSet<ActivityCategories> ActivityCategories { get; set; }
-    public DbSet<Category> Categories { get; set; }
+    public DbSet<ActivitySubLevelCategory> ActivitySubLevelCategories { get; set; }
+    public DbSet<SubLevelCategory> SubLevelCategories { get; set; }
 }

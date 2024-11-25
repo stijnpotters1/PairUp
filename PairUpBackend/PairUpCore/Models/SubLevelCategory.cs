@@ -1,7 +1,7 @@
 ﻿namespace PairUpCore.Models;
 
-[Table("category")]
-public class Category
+[Table("sub_level_category")]
+public class SubLevelCategory
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Key]
@@ -9,4 +9,6 @@ public class Category
 
     [StringLength(255)] 
     public string Name { get; set; } = null!;
+
+    public ICollection<ActivitySubLevelCategory>? ActivitySubLevelCategories { get; set; }
 }
