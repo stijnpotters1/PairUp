@@ -30,8 +30,11 @@ public static class ServiceContainer
         services.AddHostedService<ScraperBackgroundService>();
 
         // Scoped custom services (Dependency injection for services and repositories)
-        services.AddScoped<IActivityService, ActivityService>();
+        services.AddScoped<IService<Activity, ActivityResponse>, ActivityService>();
         services.AddScoped<IActivityRepository, ActivityRepository>();
+        services.AddScoped<IService<SubLevelCategory, SubLevelCategoryResponse>, SubLevelCategoryService>();
+        services.AddScoped<ISubLevelCategoryRepository, SubLevelCategoryRepository>();
+        
         services.AddScoped<IWebScraper, TripAdvisorScraper>();
 
         return services;

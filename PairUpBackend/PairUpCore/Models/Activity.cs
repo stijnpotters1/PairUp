@@ -11,6 +11,9 @@ public class Activity
     public string Name { get; set; } = null!;
 
     [StringLength(255)] 
+    public string Image { get; set; } = null!;
+
+    [StringLength(255)] 
     public string Description { get; set; } = null!;
     
     [StringLength(255)] 
@@ -32,5 +35,7 @@ public class Activity
     
     public double Longitude { get; set; }
     
-    public ICollection<ActivityCategories> ActivityCategories { get; set; } = null!;
+    public TopLevelCategory TopLevelCategory { get; set; }
+    
+    public ICollection<ActivitySubLevelCategory> ActivitySubLevelCategories { get; set; } = null!;
 }

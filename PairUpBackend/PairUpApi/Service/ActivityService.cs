@@ -1,6 +1,6 @@
 ﻿namespace PairUpApi.Service;
 
-public class ActivityService : IActivityService
+public class ActivityService : IService<Activity, ActivityResponse>
 {
     private readonly IMapper _mapper;
 
