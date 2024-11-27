@@ -12,7 +12,7 @@ global using PairUpCore.DTO.Responses;
 
 global using PairUpScraper;
 global using PairUpScraper.Interfaces;
-global using PairUpScraper.Scrapers;
+global using PairUpScraper.Scrapers.BijzonderPlekjeScraper;
 
 global using PairUpShared.Middleware;
 
