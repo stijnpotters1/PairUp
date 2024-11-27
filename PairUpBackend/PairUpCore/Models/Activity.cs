@@ -23,11 +23,11 @@ public class Activity
     public string Price { get; set; } = null!;
 
     [StringLength(255)]
-    public string Age { get; set; } = null!;
+    public string? Age { get; set; }
 
-    [StringLength(255)]
-    public string Duration { get; set; } = null!;
-    
+    [StringLength(255)] 
+    public string? Duration { get; set; }
+
     [StringLength(255)]
     public string FullAddress { get; set; } = null!;
     
@@ -37,5 +37,5 @@ public class Activity
     
     public TopLevelCategory TopLevelCategory { get; set; }
     
-    public ICollection<ActivitySubLevelCategory> ActivitySubLevelCategories { get; set; } = null!;
+    public ICollection<ActivitySubLevelCategory> ActivitySubLevelCategories { get; set; } = new List<ActivitySubLevelCategory>();
 }
