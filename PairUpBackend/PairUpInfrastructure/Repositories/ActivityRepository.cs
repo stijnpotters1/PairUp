@@ -14,15 +14,17 @@ public class ActivityRepository : IActivityRepository
     {
         var query = BuildQuery(requirements);
 
-        var totalCount = await GetTotalCount(query);
+        var filteredActivities = await query.ToListAsync();
 
-        var activities = await ApplyPagination(query, requirements);
+        var activitiesWithDistanceFilter = FilterActivitiesByDistance(filteredActivities, requirements.Latitude, requirements.Longitude, requirements.Radius);
 
-        var filteredActivities = FilterActivitiesByDistance(activities, requirements.Latitude, requirements.Longitude, requirements.Radius);
+        var totalCount = activitiesWithDistanceFilter.Count;
+
+        var paginatedActivities = ApplyPagination(activitiesWithDistanceFilter, requirements.PageNumber, requirements.PageSize);
 
         return new PagedActivityResponse<Activity>
         {
-            Items = filteredActivities,
+            Items = paginatedActivities,
             TotalCount = totalCount,
             PageNumber = requirements.PageNumber,
             PageSize = requirements.PageSize
@@ -71,16 +73,11 @@ public class ActivityRepository : IActivityRepository
         );
     }
 
-    private async Task<int> GetTotalCount(IQueryable<Activity> query)
+    private List<Activity> ApplyPagination(List<Activity> activities, int pageNumber, int pageSize)
     {
-        return await query.CountAsync();
-    }
-
-    private async Task<List<Activity>> ApplyPagination(IQueryable<Activity> query, ActivityRequest requirements)
-    {
-        return await query
-            .Skip((requirements.PageNumber - 1) * requirements.PageSize)
-            .Take(requirements.PageSize)
-            .ToListAsync();
+        return activities
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
     }
 }
