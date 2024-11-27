@@ -34,8 +34,11 @@ public static class ServiceContainer
         services.AddScoped<IActivityRepository, ActivityRepository>();
         services.AddScoped<IService<SubLevelCategory, SubLevelCategoryResponse>, SubLevelCategoryService>();
         services.AddScoped<ISubLevelCategoryRepository, SubLevelCategoryRepository>();
+
+        services.AddSingleton<HttpClient>();
         
-        services.AddScoped<IWebScraper, TripAdvisorScraper>();
+        // services.AddScoped<IWebScraper, TripAdvisorScraper>();
+        services.AddScoped<IWebScraper, BijzonderPlekjeAccomodationScraper>();
 
         return services;
     }

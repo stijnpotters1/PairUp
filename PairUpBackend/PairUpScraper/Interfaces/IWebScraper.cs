@@ -2,6 +2,5 @@
 
 public interface IWebScraper
 {
-    Task<List<Activity>> ScrapeActivitiesAsync();
-    Task SaveActivitiesToDatabaseAsync(List<Activity> activities);
+    Task ScrapeActivitiesAsync();
 }
