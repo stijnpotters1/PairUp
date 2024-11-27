@@ -7,14 +7,14 @@ using WebDriverManager.Helpers;
 
 namespace PairUpScraper.Scrapers.BijzonderPlekjeScraper;
 
-public class BijzonderPlekjeAccomodationScraper : IWebScraper
+public class BijzonderPlekjeAccommodationScraper : IWebScraper
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly ILogger<BijzonderPlekjeAccomodationScraper> _logger;
+    private readonly ILogger<BijzonderPlekjeAccommodationScraper> _logger;
     private readonly HttpClient _httpClient;
     private static readonly Random _random = new();
 
-    public BijzonderPlekjeAccomodationScraper(IServiceProvider serviceProvider, ILogger<BijzonderPlekjeAccomodationScraper> logger, HttpClient httpClient)
+    public BijzonderPlekjeAccommodationScraper(IServiceProvider serviceProvider, ILogger<BijzonderPlekjeAccommodationScraper> logger, HttpClient httpClient)
     {
         _serviceProvider = serviceProvider;
         _logger = logger;
