@@ -14,5 +14,5 @@ public class ActivityResponse
     public double Latitude { get; set; }
     public double Longitude { get; set; }
     public TopLevelCategory TopLevelCategory { get; set; }
-    public SubLevelCategoryResponse Category { get; set; } = new SubLevelCategoryResponse();
+    public ICollection<SubLevelCategoryResponse> SubLevelCategories { get; set; } = new List<SubLevelCategoryResponse>();
 }
