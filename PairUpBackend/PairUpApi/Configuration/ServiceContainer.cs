@@ -38,7 +38,7 @@ public static class ServiceContainer
         services.AddSingleton<HttpClient>();
         
         // services.AddScoped<IWebScraper, TripAdvisorScraper>();
-        services.AddScoped<IWebScraper, BijzonderPlekjeAccomodationScraper>();
+        services.AddScoped<IWebScraper, BijzonderPlekjeAccommodationScraper>();
 
         return services;
     }
