@@ -28,22 +28,31 @@ public class ScraperBackgroundService : BackgroundService
         {
             using (var scope = _scopeFactory.CreateScope())
             {
-                var webScraper = scope.ServiceProvider.GetRequiredService<IWebScraper>();
-                await webScraper.ScrapeActivitiesAsync();
-                
-                if (cancellationToken.IsCancellationRequested)
+                // Get all services registered under IWebScraper
+                var webScrapers = scope.ServiceProvider.GetServices<IWebScraper>();
+
+                var tasks = webScrapers.Select(webScraper => Task.Run(async () =>
                 {
-                    return;
-                }
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        Console.WriteLine("Cancellation requested.");
+                        return;
+                    }
+
+                    Console.WriteLine($"Starting scraper: {webScraper.GetType().Name}");
+                    await webScraper.ScrapeActivitiesAsync();
+                })).ToList();
+
+                await Task.WhenAll(tasks);
             }
         }
         catch (HttpRequestException httpRequestException)
         {
-            Console.WriteLine($"HTTP Error while scraping activities: ${httpRequestException}");
+            Console.WriteLine($"HTTP Error while scraping activities: {httpRequestException}");
         }
         catch (TimeoutException timeoutException)
         {
-            Console.WriteLine($"Timeout Error while scraping activities: ${timeoutException}");
+            Console.WriteLine($"Timeout Error while scraping activities: {timeoutException}");
         }
         catch (Exception exception)
         {
