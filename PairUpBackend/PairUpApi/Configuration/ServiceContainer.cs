@@ -25,9 +25,6 @@ public static class ServiceContainer
         
         // Automapper Configuration
         services.ConfigureMapping();
-        
-        // Register Background Service (Scraper)
-        services.AddHostedService<ScraperBackgroundService>();
 
         // Scoped custom services (Dependency injection for services and repositories)
         services.AddScoped<IService<Activity, ActivityResponse>, ActivityService>();
@@ -39,6 +36,10 @@ public static class ServiceContainer
         
         // services.AddScoped<IWebScraper, TripAdvisorScraper>();
         services.AddScoped<IWebScraper, BijzonderPlekjeAccommodationScraper>();
+        services.AddScoped<IWebScraper, BijzonderPlekjeActivityScraper>();
+        
+        // Register Background Service (Scraper)
+        services.AddHostedService<ScraperBackgroundService>();
 
         return services;
     }
