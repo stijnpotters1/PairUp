@@ -1,8 +1,7 @@
 import {Activity} from "./activity";
-import {TopLevelCategory} from "./top-level-category";
 
 export interface PagedActivityRequest {
-    topLevelCategories: TopLevelCategory[];
+    topLevelCategories: number[];
     subLevelCategories: string[];
     latitude: number;
     longitude: number;
@@ -16,5 +15,4 @@ export interface PagedActivityResponse {
     totalCount: number;
     pageNumber: number;
     pageSize: number;
-
 }
