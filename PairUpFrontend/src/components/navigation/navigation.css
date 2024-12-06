@@ -28,6 +28,7 @@
 
 .navbar-toggler {
     border: none !important;
+    box-shadow: none !important;
 }
 
 .navbar-toggler-icon {
