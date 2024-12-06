@@ -1,5 +1,5 @@
 // API Base url
-export const CUSTOM_API_BASE_URL = 'https://localhost:7156/api';
+export const CUSTOM_API_BASE_URL = 'https://localhost:7247/api';
 
 // Authentication
 export const CUSTOM_API_ENDPOINT_ACTIVITIES = `${CUSTOM_API_BASE_URL}/Activity`;
