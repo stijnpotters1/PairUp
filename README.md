@@ -1,5 +1,5 @@
 # PairUp
-this is a application that allows users to search for activities based on their location. This is done by offering users the option in the frontend to filter by categories such as: playground, zoo, parks, art galleries and historical locations, whereby it is also possible to select a radius of kilometers in which to search. The backend to which api requests can be sent is connected to a database. This backend also has a web scraping functionality that can periodically populate the database when enabled, updating or enriching the activities that can be retrieved by the API.
+This is a application that allows users to search for activities based on their location. This is done by offering users the option in the frontend to filter by categories such as: playground, zoo, parks, art galleries and historical locations, whereby it is also possible to select a radius of kilometers in which to search. The backend to which api requests can be sent is connected to a database. This backend also has a web scraping functionality that can periodically populate the database when enabled, updating or enriching the activities that can be retrieved by the API.
 
 ## Development Setup
 ### Note:  
