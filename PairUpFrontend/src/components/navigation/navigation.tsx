@@ -4,35 +4,7 @@ import "./navigation.css";
 
 const Navigation: React.FunctionComponent = () => {
     const location = useLocation();
-    const [activeLink, setActiveLink] = useState<string>(location.pathname);
-    const [showNav, setShowNav] = useState(true);
-    const [lastScrollY, setLastScrollY] = useState(0);
     const [showMegaMenu, setShowMegaMenu] = useState(false);
-
-    const handleLinkClick = (path: string) => {
-        setActiveLink(path);
-        setShowMegaMenu(false);
-    };
-
-    const controlNavbar = () => {
-        if (typeof window !== 'undefined') {
-            if (window.scrollY > lastScrollY) {
-                setShowNav(false);
-            } else {
-                setShowNav(true);
-            }
-            setLastScrollY(window.scrollY);
-        }
-    };
-
-    useEffect(() => {
-        if (typeof window !== 'undefined') {
-            window.addEventListener('scroll', controlNavbar);
-            return () => {
-                window.removeEventListener('scroll', controlNavbar);
-            };
-        }
-    }, [lastScrollY]);
 
     const renderNavLinks = () => (
         <ul className="navbar-nav ms-auto gap-2">
@@ -53,7 +25,7 @@ const Navigation: React.FunctionComponent = () => {
                         <Link
                             to="/about"
                             className="dropdown-item"
-                            onClick={() => handleLinkClick('/about')}
+                            onClick={() => setShowMegaMenu(false)}
                         >
                             About
                         </Link>
@@ -62,7 +34,7 @@ const Navigation: React.FunctionComponent = () => {
                         <Link
                             to="/contact"
                             className="dropdown-item"
-                            onClick={() => handleLinkClick('/contact')}
+                            onClick={() => setShowMegaMenu(false)}
                         >
                             Contact
                         </Link>
@@ -74,7 +46,7 @@ const Navigation: React.FunctionComponent = () => {
 
     return (
         <nav
-            className={`navbar navbar-expand-lg bg-primary px-3 fixed-top ${showNav ? 'show' : 'collapse'}`}
+            className={`navbar navbar-expand-lg bg-primary px-3 fixed-top`}
         >
             <Link to={"/trips"} className="navbar-brand d-flex flex-row gap-3 align-items-center">
                 <img
