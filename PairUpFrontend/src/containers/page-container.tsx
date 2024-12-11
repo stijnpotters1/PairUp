@@ -11,6 +11,7 @@ import Spinner from "../components/spinner/spinner";
 import { getSubLevelCategories } from "../services/sub-level-category-service";
 import { getPagedActivities } from "../services/activity-service";
 import { PagedActivityRequest } from "../models/paged-activity";
+import "../components/filter/filter.css";
 
 const PageContainer: React.FunctionComponent = () => {
     const DEFAULT_RADIUS = 30;
@@ -24,6 +25,11 @@ const PageContainer: React.FunctionComponent = () => {
     const [appliedRadius, setAppliedRadius] = useState<number>(DEFAULT_RADIUS);
     const [appliedTopLevelCategories, setAppliedTopLevelCategories] = useState<number[]>([]);
     const [appliedSubLevelCategories, setAppliedSubLevelCategories] = useState<string[]>([]);
+
+    const [isRadiusOpen, setIsRadiusOpen] = useState<boolean>(true);
+    const [isTopLevelCategoriesOpen, setIsTopLevelCategoriesOpen] = useState<boolean>(false);
+    const [isSubLevelCategoriesOpen, setIsSubLevelCategoriesOpen] = useState<boolean>(false);
+    const [isFiltersOpen, setIsFiltersOpen] = useState<boolean>(true);
 
     const [pageNumber, setPageNumber] = useState<number>(DEFAULT_PAGE_NUMBER);
     const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
@@ -57,10 +63,6 @@ const PageContainer: React.FunctionComponent = () => {
     );
 
     useEffect(() => {
-        isLoading == true;
-    })
-
-    useEffect(() => {
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
@@ -75,6 +77,15 @@ const PageContainer: React.FunctionComponent = () => {
         } else {
             console.error("Geolocation is not supported by this browser.");
         }
+
+        const handleResize = () => {
+            setIsFiltersOpen(window.matchMedia("(min-width: 768px)").matches);
+        };
+
+        handleResize();
+        window.addEventListener("resize", handleResize);
+
+        return () => window.removeEventListener("resize", handleResize);
     }, []);
 
     const handleRadiusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,6 +116,17 @@ const PageContainer: React.FunctionComponent = () => {
         refetch();
     };
 
+    const clearAllFilters = () => {
+        setRadius(DEFAULT_RADIUS);
+        setAppliedRadius(DEFAULT_RADIUS);
+        setTopLevelCategories([]);
+        setAppliedTopLevelCategories([]);
+        setSubLevelCategories([]);
+        setAppliedSubLevelCategories([]);
+        setPageNumber(1);
+        refetch();
+    };
+
     const handlePageChange = (newPageNumber: number) => {
         setPageNumber(newPageNumber);
         refetch();
@@ -121,79 +143,174 @@ const PageContainer: React.FunctionComponent = () => {
         topLevelCategories.toString() !== appliedTopLevelCategories.toString() ||
         subLevelCategories.toString() !== appliedSubLevelCategories.toString();
 
+    const isFilterChangedTowardsDefault =
+        radius !== DEFAULT_RADIUS ||
+        topLevelCategories.length !== 0 ||
+        subLevelCategories.length !== 0;
+
     const maxPages = Math.ceil(data?.totalCount / pageSize);
 
     return (
-        <Container className="custom-container px-5 py-3 navigation-margin">
+        <Container className="custom-container px-md-0 px-4 py-3 navigation-margin">
             <Row>
-                <Column size="col-12 col-md-4">
+                <Column size="col-12 col-md-3 mb-md-5">
                     <FilterContainer>
-                        <h4>Filters</h4>
-                        <div className="mb-3">
-                            <label htmlFor="radiusInput">Radius (km):</label>
-                            <input
-                                type="number"
-                                id="radiusInput"
-                                defaultValue={radius}
-                                onChange={handleRadiusChange}
-                                min={0}
-                                className="form-control"
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <h5>Top Level Categories</h5>
-                            {Object.keys(TopLevelCategory)
-                                .filter((key) => isNaN(Number(key)))
-                                .map((key) => (
-                                    <div key={key}>
-                                        <label>
-                                            <input
-                                                type="checkbox"
-                                                value={key}
-                                                onChange={() =>
-                                                    handleTopLevelCategoryChange(TopLevelCategory[key as keyof typeof TopLevelCategory])
-                                                }
-                                                checked={topLevelCategories.includes(TopLevelCategory[key as keyof typeof TopLevelCategory])}
-                                            />
-                                            {capitalize(key.toString())}
-                                        </label>
+                        <div className="d-flex justify-content-between align-items-center">
+                            <h4 className="ms-1 d-flex align-self-center">Filters</h4>
+                            <div className="d-flex flex-row gap-3">
+                                {isFilterChangedTowardsDefault && (
+                                    <div
+                                        className="d-flex align-items-center text-danger text-decoration-underline cursor-pointer"
+                                        onClick={clearAllFilters}
+                                    >
+                                        Clear
                                     </div>
-                                ))}
-                        </div>
+                                )}
 
-                        <div className="mb-3">
-                            <h5>Sub Categories</h5>
-                            {isSubLevelLoading ? (
-                                <p>Loading...</p>
-                            ) : (
-                                <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
-                                    {fetchedSubLevelCategories?.map((subCategory) => (
-                                        <div key={subCategory.id}>
-                                            <label>
-                                                <input
-                                                    type="checkbox"
-                                                    value={subCategory.name}
-                                                    onChange={() => handleSubLevelCategoryChange(subCategory.name)}
-                                                    checked={subLevelCategories.includes(subCategory.name)}
-                                                />
-                                                {subCategory.name}
-                                            </label>
-                                        </div>
-                                    ))}
+                                <div
+                                    className="filter-toggle p-0 text-decoration-none"
+                                    onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+                                >
+                                    <i
+                                        className={`bi ${isFiltersOpen ? "bi-chevron-up" : "bi-chevron-down"}`}
+                                        style={{ fontSize: "1.5rem", color: "#333" }}
+                                    ></i>
                                 </div>
-                            )}
+                            </div>
                         </div>
+                        {isFiltersOpen ? (
+                            <>
+                                <div className="my-3 ms-1">
+                                    <div
+                                        className="filter-toggle d-flex justify-content-between"
+                                        onClick={() => setIsRadiusOpen(!isRadiusOpen)}
+                                    >
+                                        <p className="fw-semibold mb-1">Radius</p>
+                                        <i
+                                            className={`bi ${isRadiusOpen ? "bi-chevron-down" : "bi-chevron-up"}`}
+                                        ></i>
+                                    </div>
 
-                        <button
-                            className={`btn btn-primary ${isFilterChanged ? "active" : ""}`}
-                            onClick={applyFilters}
-                            disabled={!isFilterChanged}
-                        >
-                            Apply Filters
-                        </button>
+                                    {isRadiusOpen ? (
+                                        <input
+                                            type="number"
+                                            id="radiusInput"
+                                            value={radius}
+                                            onChange={handleRadiusChange}
+                                            min={0}
+                                            className="form-control rounded-3"
+                                        />
+                                    ) : (
+                                        <hr className="m-0" />
+                                    )}
+                                </div>
+
+                                {/* Categories filter */}
+                                <div className="mb-3 ms-1">
+                                    <div
+                                        className="filter-toggle d-flex justify-content-between"
+                                        onClick={() => setIsTopLevelCategoriesOpen(!isTopLevelCategoriesOpen)}
+                                    >
+                                        <p className="fw-semibold mb-1">Categories</p>
+                                        <i
+                                            className={`bi ${isTopLevelCategoriesOpen ? "bi-chevron-down" : "bi-chevron-up"}`}
+                                        ></i>
+                                    </div>
+
+                                    {isTopLevelCategoriesOpen ? (
+                                        <div>
+                                            {Object.keys(TopLevelCategory)
+                                                .filter((key) => isNaN(Number(key)))
+                                                .map((key) => (
+                                                    <div key={key} className="form-check clickable">
+                                                        <input
+                                                            type="checkbox"
+                                                            value={key}
+                                                            id={`topLevel-${key}`}
+                                                            onChange={() =>
+                                                                handleTopLevelCategoryChange(
+                                                                    TopLevelCategory[key as keyof typeof TopLevelCategory]
+                                                                )
+                                                            }
+                                                            checked={topLevelCategories.includes(
+                                                                TopLevelCategory[key as keyof typeof TopLevelCategory]
+                                                            )}
+                                                            className="form-check-input rounded-circle"
+                                                        />
+                                                        <label
+                                                            htmlFor={`topLevel-${key}`}
+                                                            className="form-check-label"
+                                                        >
+                                                            {capitalize(key.toString())}
+                                                        </label>
+                                                    </div>
+                                                ))}
+                                        </div>
+                                    ) : (
+                                        <hr className="m-0" />
+                                    )}
+                                </div>
+
+                                <div className="mb-4">
+                                    <div
+                                        className="filter-toggle d-flex justify-content-between ms-1"
+                                        onClick={() => setIsSubLevelCategoriesOpen(!isSubLevelCategoriesOpen)}
+                                    >
+                                        <p className="fw-semibold mb-1">Sub Categories</p>
+                                        <i
+                                            className={`bi ${isSubLevelCategoriesOpen ? "bi-chevron-down" : "bi-chevron-up"}`}
+                                        ></i>
+                                    </div>
+                                    {isSubLevelCategoriesOpen ? (
+                                        <div style={{ maxHeight: "300px" }} className="overflow-y-auto">
+                                            {isSubLevelLoading ? (
+                                                <p>Loading...</p>
+                                            ) : (
+                                                fetchedSubLevelCategories?.map((subCategory) => (
+                                                    <div key={subCategory.id} className="form-check clickable ms-1">
+                                                        <input
+                                                            type="checkbox"
+                                                            value={subCategory.name}
+                                                            id={`subLevel-${subCategory.name}`}
+                                                            onChange={() =>
+                                                                handleSubLevelCategoryChange(subCategory.name)
+                                                            }
+                                                            checked={subLevelCategories.includes(subCategory.name)}
+                                                            className="form-check-input rounded-circle"
+                                                        />
+                                                        <label
+                                                            htmlFor={`subLevel-${subCategory.name}`}
+                                                            className="form-check-label"
+                                                        >
+                                                            {subCategory.name}
+                                                        </label>
+                                                    </div>
+                                                ))
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <hr className="m-0" />
+                                    )}
+                                </div>
+
+                                {/* Apply Filters Button */}
+                                <button
+                                    className={`w-50 btn btn-primary mb-4 ms-1 ${isFilterChanged ? "active" : ""}`}
+                                    onClick={applyFilters}
+                                    disabled={!isFilterChanged}
+                                >
+                                    Apply Filters
+                                </button>
+                            </>
+                        ) : (
+                            <hr className="m-0" />
+                        )}
                     </FilterContainer>
                 </Column>
-                <Column size="col-12 col-md-8">
+
+                {/* Card Container */}
+                <hr className="d-md-none" />
+                <Column size="col-12 col-md-9">
                     <CardContainer>
                         {location ? (
                             <>
@@ -204,15 +321,14 @@ const PageContainer: React.FunctionComponent = () => {
                                 ) : (
                                     <div>
                                         {data && data.items && data.items.length === 0 ? (
-                                            <p>No activities found with the selected filters.</p>
+                                            <p className="mt-5 text-center">No activities found with the selected filters...</p>
                                         ) : (
                                             <div className="d-flex flex-column gap-3">
                                                 <div className="d-flex justify-content-end">
-                                                    <label htmlFor="pageSizeSelect">Page Size:</label>
                                                     <select
-                                                        id="pageSizeSelect"
                                                         value={pageSize}
                                                         onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+                                                        className="form-select w-auto"
                                                     >
                                                         <option value={10}>10</option>
                                                         <option value={20}>20</option>
@@ -220,25 +336,48 @@ const PageContainer: React.FunctionComponent = () => {
                                                     </select>
                                                 </div>
 
-                                                <div>
+                                                <div className="row row-cols-1">
                                                     {data?.items?.map((activity) => (
-                                                        <div key={activity.id}>
-                                                            <h5>{activity.name}</h5>
-                                                            <p>{activity.description}</p>
+                                                        <div key={activity.id} className="col mb-4">
+                                                            <div className="card animate__animated animate__fadeIn card-hover cursor-pointer">
+                                                                <div className="row g-0">
+                                                                    <div className="col-md-4">
+                                                                        <img
+                                                                            src={activity.image}
+                                                                            alt={activity.name}
+                                                                            className="card-img-top"
+                                                                        />
+                                                                    </div>
+                                                                    <div className="col-md-8">
+                                                                        <div className="card-body">
+                                                                            <h5 className="card-title">{activity.name}</h5>
+                                                                            <p className="card-text">{activity.description}</p>
+                                                                            <a href={activity.url} className="btn btn-primary">
+                                                                                View Details
+                                                                            </a>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     ))}
                                                 </div>
 
                                                 <div className="d-flex justify-content-center">
-                                                    <button onClick={() => handlePageChange(pageNumber - 1)} disabled={pageNumber === 1}>
-                                                        <i className="bi bi-arrow-left-short"></i>
+                                                    <button
+                                                        onClick={() => handlePageChange(pageNumber - 1)}
+                                                        disabled={pageNumber === 1}
+                                                        className="btn btn-outline-secondary me-2 rounded-2"
+                                                    >
+                                                        &lt;
                                                     </button>
-                                                    <span>Page {pageNumber}</span>
+                                                    <span className="align-self-center px-2">{pageNumber}</span>
                                                     <button
                                                         onClick={() => handlePageChange(pageNumber + 1)}
                                                         disabled={isLoading || !data || pageNumber === maxPages}
+                                                        className="btn btn-outline-secondary ms-2 rounded-2"
                                                     >
-                                                        <i className="bi bi-arrow-right-short"></i>
+                                                        &gt;
                                                     </button>
                                                 </div>
                                             </div>
