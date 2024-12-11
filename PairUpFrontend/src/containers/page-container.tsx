@@ -153,7 +153,7 @@ const PageContainer: React.FunctionComponent = () => {
     return (
         <Container className="custom-container px-md-0 px-4 py-3 navigation-margin">
             <Row>
-                <Column size="col-12 col-md-3 mb-md-5">
+                <Column size="col-12 col-md-3 mb-md-4">
                     <FilterContainer>
                         <div className="d-flex justify-content-between align-items-center">
                             <h4 className="ms-1 d-flex align-self-center">Filters</h4>
@@ -303,13 +303,17 @@ const PageContainer: React.FunctionComponent = () => {
                                 </button>
                             </>
                         ) : (
-                            <hr className="m-0" />
+                            <hr className="mb-4 mt-0" />
                         )}
                     </FilterContainer>
                 </Column>
 
-                {/* Card Container */}
-                <hr className="d-md-none" />
+                {isFiltersOpen && (
+                    <div className="d-md-none px-3">
+                        <hr />
+                    </div>
+                )}
+
                 <Column size="col-12 col-md-9">
                     <CardContainer>
                         {location ? (
