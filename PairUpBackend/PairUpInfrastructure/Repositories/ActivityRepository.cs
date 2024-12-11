@@ -38,22 +38,25 @@ public class ActivityRepository : IActivityRepository
             .ThenInclude(ac => ac.SubLevelCategory)
             .AsQueryable();
 
-        query = ApplyCategoryFilter(query, requirements.SubLevelCategories);
+        query = ApplyCategoryFilter(query, requirements.TopLevelCategories, requirements.SubLevelCategories);
 
         return query;
     }
 
 
-    private IQueryable<Activity> ApplyCategoryFilter(IQueryable<Activity> query, ICollection<string>? categories)
+    private IQueryable<Activity> ApplyCategoryFilter(IQueryable<Activity> query, ICollection<TopLevelCategory> topLevelCategories, ICollection<string> subLevelCategories)
     {
-        if (categories?.Any() == true)
+        if (topLevelCategories.Any() || subLevelCategories.Any())
         {
-            query = query.Where(a => a.ActivitySubLevelCategories
-                .Any(ac => categories.Contains(ac.SubLevelCategory.Name)));
+            query = query.Where(a =>
+                (topLevelCategories.Contains(a.TopLevelCategory) == true) ||
+                (subLevelCategories.Any(sub => a.ActivitySubLevelCategories.Any(ac => ac.SubLevelCategory.Name == sub)) == true)
+            );
         }
-
+    
         return query;
     }
+
 
     private List<Activity> FilterActivitiesByDistance(List<Activity> activities, double userLatitude, double userLongitude, int radius)
     {
