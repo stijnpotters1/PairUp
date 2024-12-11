@@ -28,6 +28,10 @@
   min-height: calc(100vh - 77px);
 }
 
+.custom-card-container {
+  min-height: calc(100vh - (2rem + 77px));
+}
+
 .cursor-pointer {
   cursor: pointer;
 }
