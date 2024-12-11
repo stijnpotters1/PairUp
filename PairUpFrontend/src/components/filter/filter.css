@@ -1,0 +1,43 @@
+/* Custom styles for the checkbox and label */
+.form-check.clickable {
+    cursor: pointer;
+}
+
+.card-hover:hover {
+    background-color: #f0f0f0; /* Hover background color */
+    transform: scale(1.01); /* Slightly scale the card */
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.card .row {
+    height: 100%;
+}
+
+.card-img-top {
+    width: 100%;
+    height: auto;
+}
+
+.card-title {
+    font-size: 1.25rem;
+}
+
+.card-text {
+    font-size: 1rem;
+}
+
+.filter-toggle {
+    cursor: pointer;
+}
+
+.filter-toggle i {
+    transition: transform 0.3s ease;
+}
+
+.filter-toggle i.bi-chevron-up {
+    transform: rotate(180deg);
+}
+
+.filter-toggle i.bi-chevron-down {
+    transform: rotate(-180deg);
+}
