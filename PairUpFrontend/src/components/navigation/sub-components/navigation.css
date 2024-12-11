@@ -12,6 +12,7 @@
 .nav-item.dropdown:hover .dropdown-menu,
 .nav-item.dropdown.show .dropdown-menu {
     display: block;
+    margin-bottom: .5rem;
 }
 
 .nav-item.dropdown .dropdown-menu {
@@ -39,7 +40,8 @@
         right: 0;
         width: 100%;
         z-index: 1000;
-        border-bottom: 1px solid lightgray !important;
+        border-bottom: 1px solid gray !important;
+        box-shadow: 0px 5px 50px lightgray;
     }
 
     .navbar-nav {
