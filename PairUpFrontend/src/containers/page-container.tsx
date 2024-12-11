@@ -10,45 +10,55 @@ import { capitalize } from "../utils/capitalize";
 import Spinner from "../components/spinner/spinner";
 import { getSubLevelCategories } from "../services/sub-level-category-service";
 import { getPagedActivities } from "../services/activity-service";
-import {PagedActivityRequest} from "../models/paged-activity";
+import { PagedActivityRequest } from "../models/paged-activity";
 
 const PageContainer: React.FunctionComponent = () => {
     const DEFAULT_RADIUS = 30;
     const DEFAULT_PAGE_NUMBER = 1;
     const DEFAULT_PAGE_SIZE = 20;
 
-    const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
     const [radius, setRadius] = useState<number>(DEFAULT_RADIUS);
-    const [selectedTopLevelCategories, setSelectedTopLevelCategories] = useState<number[]>([]);
-    const [selectedSubLevelCategories, setSelectedSubLevelCategories] = useState<string[]>([]);
+    const [topLevelCategories, setTopLevelCategories] = useState<number[]>([]);
+    const [subLevelCategories, setSubLevelCategories] = useState<string[]>([]);
+
+    const [appliedRadius, setAppliedRadius] = useState<number>(DEFAULT_RADIUS);
+    const [appliedTopLevelCategories, setAppliedTopLevelCategories] = useState<number[]>([]);
+    const [appliedSubLevelCategories, setAppliedSubLevelCategories] = useState<string[]>([]);
+
     const [pageNumber, setPageNumber] = useState<number>(DEFAULT_PAGE_NUMBER);
     const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
 
-    const { data: subLevelCategories, isLoading: isSubLevelLoading } = useQuery(
+    const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+
+    const { data: fetchedSubLevelCategories, isLoading: isSubLevelLoading } = useQuery(
         "subLevelCategories",
         getSubLevelCategories
     );
 
     const { data, error, isLoading, isFetching, refetch } = useQuery(
-        ['activities', selectedTopLevelCategories, selectedSubLevelCategories, radius, location, pageNumber, pageSize],
+        ['activities', appliedRadius, appliedTopLevelCategories, appliedSubLevelCategories, location, pageNumber, pageSize],
         () => {
             const request: PagedActivityRequest = {
-                topLevelCategories: selectedTopLevelCategories,
-                subLevelCategories: selectedSubLevelCategories,
-                radius,
+                topLevelCategories: appliedTopLevelCategories,
+                subLevelCategories: appliedSubLevelCategories,
+                radius: appliedRadius,
                 latitude: location?.latitude || 0,
                 longitude: location?.longitude || 0,
                 pageNumber,
-                pageSize
+                pageSize,
             };
             return getPagedActivities(request);
         },
         {
             keepPreviousData: true,
             enabled: !!location,
-            refetchOnWindowFocus: false
+            refetchOnWindowFocus: false,
         }
     );
+
+    useEffect(() => {
+        isLoading == true;
+    })
 
     useEffect(() => {
         if ("geolocation" in navigator) {
@@ -67,39 +77,49 @@ const PageContainer: React.FunctionComponent = () => {
         }
     }, []);
 
+    const handleRadiusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setRadius(Number(e.target.value));
+    };
+
     const handleTopLevelCategoryChange = (category: TopLevelCategory) => {
-        setSelectedTopLevelCategories((prev) =>
+        setTopLevelCategories((prev) =>
             prev.includes(category)
                 ? prev.filter((item) => item !== category)
                 : [...prev, category]
         );
-        setPageNumber(1);
     };
 
-    const handleRadiusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setRadius(Number(e.target.value));
-        setPageNumber(1);
+    const handleSubLevelCategoryChange = (subCategoryName: string) => {
+        setSubLevelCategories((prev) =>
+            prev.includes(subCategoryName)
+                ? prev.filter((item) => item !== subCategoryName)
+                : [...prev, subCategoryName]
+        );
     };
 
-    const handleSubLevelCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
-        setSelectedSubLevelCategories(selectedOptions);
+    const applyFilters = () => {
+        setAppliedRadius(radius);
+        setAppliedTopLevelCategories(topLevelCategories);
+        setAppliedSubLevelCategories(subLevelCategories);
         setPageNumber(1);
+        refetch();
     };
 
-    // Handle page number change
     const handlePageChange = (newPageNumber: number) => {
-        // Prevent setting page number beyond the max pages
-        const maxPageNumber = Math.ceil(data?.totalCount / pageSize);
-        if (newPageNumber >= 1 && newPageNumber <= maxPageNumber) {
-            setPageNumber(newPageNumber);
-        }
+        setPageNumber(newPageNumber);
+        refetch();
     };
 
     const handlePageSizeChange = (newPageSize: number) => {
         setPageSize(newPageSize);
-        setPageNumber(1); // Reset to the first page when page size changes
+        setPageNumber(1);
+        refetch();
     };
+
+    const isFilterChanged =
+        radius !== appliedRadius ||
+        topLevelCategories.toString() !== appliedTopLevelCategories.toString() ||
+        subLevelCategories.toString() !== appliedSubLevelCategories.toString();
 
     const maxPages = Math.ceil(data?.totalCount / pageSize);
 
@@ -114,7 +134,7 @@ const PageContainer: React.FunctionComponent = () => {
                             <input
                                 type="number"
                                 id="radiusInput"
-                                value={radius}
+                                defaultValue={radius}
                                 onChange={handleRadiusChange}
                                 min={0}
                                 className="form-control"
@@ -133,7 +153,7 @@ const PageContainer: React.FunctionComponent = () => {
                                                 onChange={() =>
                                                     handleTopLevelCategoryChange(TopLevelCategory[key as keyof typeof TopLevelCategory])
                                                 }
-                                                checked={selectedTopLevelCategories.includes(TopLevelCategory[key as keyof typeof TopLevelCategory])}
+                                                checked={topLevelCategories.includes(TopLevelCategory[key as keyof typeof TopLevelCategory])}
                                             />
                                             {capitalize(key.toString())}
                                         </label>
@@ -142,25 +162,35 @@ const PageContainer: React.FunctionComponent = () => {
                         </div>
 
                         <div className="mb-3">
-                            <label htmlFor="subLevelCategorySelect">Sub Categories:</label>
+                            <h5>Sub Categories</h5>
                             {isSubLevelLoading ? (
                                 <p>Loading...</p>
                             ) : (
-                                <select
-                                    id="subLevelCategorySelect"
-                                    multiple
-                                    className="form-select"
-                                    value={selectedSubLevelCategories}
-                                    onChange={handleSubLevelCategoryChange}
-                                >
-                                    {subLevelCategories?.map((subCategory) => (
-                                        <option key={subCategory.id} value={subCategory.id}>
-                                            {subCategory.name}
-                                        </option>
+                                <div style={{ maxHeight: '150px', overflowY: 'auto' }}>
+                                    {fetchedSubLevelCategories?.map((subCategory) => (
+                                        <div key={subCategory.id}>
+                                            <label>
+                                                <input
+                                                    type="checkbox"
+                                                    value={subCategory.name}
+                                                    onChange={() => handleSubLevelCategoryChange(subCategory.name)}
+                                                    checked={subLevelCategories.includes(subCategory.name)}
+                                                />
+                                                {subCategory.name}
+                                            </label>
+                                        </div>
                                     ))}
-                                </select>
+                                </div>
                             )}
                         </div>
+
+                        <button
+                            className={`btn btn-primary ${isFilterChanged ? "active" : ""}`}
+                            onClick={applyFilters}
+                            disabled={!isFilterChanged}
+                        >
+                            Apply Filters
+                        </button>
                     </FilterContainer>
                 </Column>
                 <Column size="col-12 col-md-8">
@@ -177,7 +207,6 @@ const PageContainer: React.FunctionComponent = () => {
                                             <p>No activities found with the selected filters.</p>
                                         ) : (
                                             <div className="d-flex flex-column gap-3">
-                                                {/* Page Size Selection */}
                                                 <div className="d-flex justify-content-end">
                                                     <label htmlFor="pageSizeSelect">Page Size:</label>
                                                     <select
@@ -191,7 +220,6 @@ const PageContainer: React.FunctionComponent = () => {
                                                     </select>
                                                 </div>
 
-                                                {/* Displaying Activity Items */}
                                                 <div>
                                                     {data?.items?.map((activity) => (
                                                         <div key={activity.id}>
