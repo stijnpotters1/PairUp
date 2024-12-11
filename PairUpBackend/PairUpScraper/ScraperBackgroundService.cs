@@ -56,7 +56,7 @@ public class ScraperBackgroundService : BackgroundService
         }
         catch (Exception exception)
         {
-            throw new Exception($"An unexpected error occurred: {exception.Message}");
+            Console.WriteLine($"An unexpected error occurred: {exception.Message}");
         }
     }
 }
