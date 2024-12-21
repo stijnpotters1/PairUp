@@ -171,10 +171,7 @@ const PageContainer: React.FunctionComponent = () => {
                                     className="filter-toggle p-0 text-decoration-none"
                                     onClick={() => setIsFiltersOpen(!isFiltersOpen)}
                                 >
-                                    <i
-                                        className={`bi ${isFiltersOpen ? "bi-chevron-up" : "bi-chevron-down"}`}
-                                        style={{ fontSize: "1.5rem", color: "#333" }}
-                                    ></i>
+                                    <i className={`bi ${isFiltersOpen ? "bi-chevron-up" : "bi-chevron-down"}`} style={{ fontSize: "1.5rem", color: "#333" }} />
                                 </div>
                             </div>
                         </div>
@@ -186,9 +183,7 @@ const PageContainer: React.FunctionComponent = () => {
                                         onClick={() => setIsRadiusOpen(!isRadiusOpen)}
                                     >
                                         <p className="fw-semibold mb-1">Radius</p>
-                                        <i
-                                            className={`bi ${isRadiusOpen ? "bi-chevron-down" : "bi-chevron-up"}`}
-                                        ></i>
+                                        <i className={`bi ${isRadiusOpen ? "bi-chevron-down" : "bi-chevron-up"}`} />
                                     </div>
 
                                     {isRadiusOpen ? (
@@ -212,9 +207,7 @@ const PageContainer: React.FunctionComponent = () => {
                                         onClick={() => setIsTopLevelCategoriesOpen(!isTopLevelCategoriesOpen)}
                                     >
                                         <p className="fw-semibold mb-1">Categories</p>
-                                        <i
-                                            className={`bi ${isTopLevelCategoriesOpen ? "bi-chevron-down" : "bi-chevron-up"}`}
-                                        ></i>
+                                        <i className={`bi ${isTopLevelCategoriesOpen ? "bi-chevron-down" : "bi-chevron-up"}`} />
                                     </div>
 
                                     {isTopLevelCategoriesOpen ? (
@@ -257,9 +250,7 @@ const PageContainer: React.FunctionComponent = () => {
                                         onClick={() => setIsSubLevelCategoriesOpen(!isSubLevelCategoriesOpen)}
                                     >
                                         <p className="fw-semibold mb-1">Sub Categories</p>
-                                        <i
-                                            className={`bi ${isSubLevelCategoriesOpen ? "bi-chevron-down" : "bi-chevron-up"}`}
-                                        ></i>
+                                        <i className={`bi ${isSubLevelCategoriesOpen ? "bi-chevron-down" : "bi-chevron-up"}`} />
                                     </div>
                                     {isSubLevelCategoriesOpen ? (
                                         <div style={{ maxHeight: "300px" }} className="overflow-y-auto">
@@ -353,14 +344,17 @@ const PageContainer: React.FunctionComponent = () => {
                                                                         />
                                                                     </div>
                                                                     <div className="col-md-8">
-                                                                        <div className="card-body">
+                                                                        <div className="card-body justify-content-between">
                                                                             <h5 className="card-title">{activity.name}</h5>
                                                                             <p className="card-text">{activity.description}</p>
-                                                                            <a href={activity.url} className="btn btn-primary">
-                                                                                View Details
-                                                                            </a>
+                                                                            <div className="d-flex justify-content-end">
+                                                                                <i className="bi bi-chevron-right" />
+                                                                            </div>
                                                                         </div>
                                                                     </div>
+
+                                                                    //todo change the above card, and make it use up all the space
+
                                                                 </div>
                                                             </div>
                                                         </div>
