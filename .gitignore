@@ -29,3 +29,5 @@ obj/
 *.user
 *.userosscache
 *.sln.docstates
+
+Chrome/
