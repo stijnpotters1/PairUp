@@ -4,6 +4,9 @@ public static class ServiceContainer
 {
     public static IServiceCollection InstantiateServices(this IServiceCollection services, WebApplicationBuilder builder)
     {
+        // Configure app settings
+        services.ConfigureAppSettings(builder);
+        
         // CORS Configuration
         services.ConfigureCustomCors();
 
