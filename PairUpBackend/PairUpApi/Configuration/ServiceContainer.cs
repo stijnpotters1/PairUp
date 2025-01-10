@@ -37,9 +37,9 @@ public static class ServiceContainer
 
         services.AddSingleton<HttpClient>();
         
-        // services.AddScoped<IWebScraper, TripAdvisorScraper>();
-        services.AddScoped<IWebScraper, BijzonderPlekjeAccommodationScraper>();
-        services.AddScoped<IWebScraper, BijzonderPlekjeActivityScraper>();
+        // Scraper registration
+        services.AddScoped<BaseWebScraper, BijzonderPlekjeAccommodationScraper>();
+        services.AddScoped<BaseWebScraper, BijzonderPlekjeActivityScraper>();
         
         // Register Background Service (Scraper)
         services.AddHostedService<ScraperBackgroundService>();

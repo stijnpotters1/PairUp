@@ -28,10 +28,10 @@ public class ScraperBackgroundService : BackgroundService
         {
             using (var scope = _scopeFactory.CreateScope())
             {
-                // Get all services registered under IWebScraper
-                var webScrapers = scope.ServiceProvider.GetServices<IWebScraper>();
+                // Also, get all the concrete classes that inherit from BaseWebScraper
+                var scrapers = scope.ServiceProvider.GetServices<BaseWebScraper>().ToList();
 
-                var tasks = webScrapers.Select(webScraper => Task.Run(async () =>
+                var tasks = scrapers.Select(webScraper => Task.Run(async () =>
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
