@@ -16,7 +16,7 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.RoleId, opt => opt.Ignore())
             .ForMember(dest => dest.Role, opt => opt.Ignore());
         
-        CreateMap<Role, RoleDto>();
+        CreateMap<PairUpCore.Models.Role, RoleDto>();
         
         CreateMap<Activity, ActivityResponse>()
             .ForMember(dest => dest.SubLevelCategories, opt => opt.MapFrom(src => src.ActivitySubLevelCategories.Select(asc => asc.SubLevelCategory)));

@@ -19,6 +19,8 @@ global using PairUpShared.Middleware;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.AspNetCore.Authorization;
 
 global using AutoMapper;
 global using DotNetEnv;
+global using AngleSharp.Text;
