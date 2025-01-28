@@ -1,6 +1,6 @@
 ﻿namespace PairUpCore.DTO.Requests;
 
-public class ActivityRequest
+public record ActivityRequest
 {
     public ICollection<TopLevelCategory> TopLevelCategories { get; set; }
     

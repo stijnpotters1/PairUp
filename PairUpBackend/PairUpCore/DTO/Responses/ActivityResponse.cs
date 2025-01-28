@@ -1,6 +1,6 @@
 ﻿namespace PairUpCore.DTO.Responses;
 
-public class ActivityResponse
+public record ActivityResponse
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = null!;

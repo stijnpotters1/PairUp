@@ -24,4 +24,8 @@
       <ProjectReference Include="..\PairUpShared\PairUpShared.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Configuration\Seeder\" />
+    </ItemGroup>
+
 </Project>

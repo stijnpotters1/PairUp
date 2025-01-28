@@ -1,6 +1,6 @@
 ﻿namespace PairUpCore.DTO.Responses;
 
-public class PagedActivityResponse<T>
+public record PagedActivityResponse<T>
 {
     public IEnumerable<T> Items { get; set; } = null!;
     public int TotalCount { get; set; }
