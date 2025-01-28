@@ -13,7 +13,7 @@ import { getPagedActivities } from "../services/activity-service";
 import { PagedActivityRequest } from "../models/paged-activity";
 import "../components/filter/filter.css";
 
-const PageContainer: React.FunctionComponent = () => {
+const PageContainer: React.FunctionComponent = ({ setActivities }) => {
     const DEFAULT_RADIUS = 30;
     const DEFAULT_PAGE_NUMBER = 1;
     const DEFAULT_PAGE_SIZE = 20;
