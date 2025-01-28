@@ -6,7 +6,9 @@ public class DataContext : DbContext
     {
     }
     
+    public DbSet<User> Users { get; set; }
+    public DbSet<Role> Roles { get; set; }
     public DbSet<Activity> Activities { get; set; }
-    public DbSet<ActivitySubLevelCategory> ActivitySubLevelCategories { get; set; }
     public DbSet<SubLevelCategory> SubLevelCategories { get; set; }
+    public DbSet<ActivitySubLevelCategory> ActivitySubLevelCategories { get; set; }
 }
