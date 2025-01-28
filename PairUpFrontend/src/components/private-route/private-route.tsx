@@ -18,11 +18,11 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ element, roles }) => {
     const user = getUser();
 
     if (!user) {
-        return <Navigate to="/radar/recipe" state={{ from: location }} />;
+        return <Navigate to="/trips" state={{ from: location }} />;
     }
 
     if (roles && !roles.includes(user.role.name)) {
-        return <Navigate to="/radar/recipe" state={{ from: location }} />;
+        return <Navigate to="/trips" state={{ from: location }} />;
     }
 
     return element;
