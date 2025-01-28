@@ -3,12 +3,14 @@ import Navbar from "./sub-components/navbar";
 import NavbarBrand from "./sub-components/narbar-brand";
 import NavbarToggler from "./sub-components/navbar-toggler";
 import Nav from "./sub-components/nav";
-import Dropdown from "./sub-components/dropdown";
-import DropdownItem from "./sub-components/dropdown-item";
+import NavItem from "./sub-components/navitem";
+import {isAuthenticated, logout} from "../../services/auth-service";
+import {useUser} from "../../hooks/user-auth";
 
 const Navigation: React.FunctionComponent = () => {
+    const { isAdmin } = useUser();
+
     const [showMegaMenu, setShowMegaMenu] = useState(false);
-    const [showDropDownItems, setShowDropDownItems] = useState(false);
 
     return (
         <Navbar>
@@ -22,18 +24,35 @@ const Navigation: React.FunctionComponent = () => {
 
             <div className={`collapse navbar-collapse ${showMegaMenu ? "show" : ""}`}>
                 <Nav className={showMegaMenu ? "mega-menu" : ""}>
-                    <Dropdown
-                        label="Pair Up"
-                        isOpen={showDropDownItems}
-                        onToggle={() => setShowDropDownItems(!showDropDownItems)}
-                    >
-                        <DropdownItem to="/about" onClick={() => setShowMegaMenu(false)}>
-                            About
-                        </DropdownItem>
-                        <DropdownItem to="/contact" onClick={() => setShowMegaMenu(false)}>
-                            Contact
-                        </DropdownItem>
-                    </Dropdown>
+                    <NavItem to="/trips">
+                        Trips
+                    </NavItem>
+
+                    {isAuthenticated() && isAdmin && (
+                        <NavItem to="/users">
+                            Users
+                        </NavItem>
+                    )}
+
+                    {isAuthenticated() ? (
+                        <>
+                            <NavItem to="/liked">
+                                Liked
+                            </NavItem>
+
+                            <NavItem to="/profile">
+                                Profile
+                            </NavItem>
+
+                            <NavItem to="/logout" onClick={() => logout()}>
+                                Logout
+                            </NavItem>
+                        </>
+                        ) : (
+                        <NavItem to="/login">
+                            Login
+                        </NavItem>
+                    )}
                 </Nav>
             </div>
         </Navbar>

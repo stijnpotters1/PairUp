@@ -3,6 +3,12 @@
     border-bottom: 1px solid #ccc;
 }
 
+.nav-item {
+    text-decoration: none;
+    color: white;
+    font-weight: 600;
+}
+
 .navbar-nav .nav-item .nav-link {
     color: #ffffff;
     padding: 8px 15px;
@@ -52,6 +58,7 @@
 
     .nav-item {
         width: 100%;
+        color: black;
     }
 
     .nav-link {
@@ -76,7 +83,7 @@
 
 @media (min-width: 769px) {
     .nav-link {
-        color: #ffffff;
+        color: white !important;
     }
 
     .dropdown-item {
