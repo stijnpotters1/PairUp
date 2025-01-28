@@ -1,5 +1,5 @@
 import {ErrorResponse} from "../models/error";
-import {axiosInstance} from "./request-instance";
+import axiosInstance from "./request-instance";
 import {CUSTOM_API_ENDPOINT_SUB_LEVEL_CATEGORIES} from "../constants/api";
 import {AxiosError} from "axios";
 import {SubLevelCategory} from "../models/sub-level-category";

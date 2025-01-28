@@ -1,5 +1,5 @@
 import {ErrorResponse} from "../models/error";
-import {axiosInstance} from "./request-instance";
+import axiosInstance from "./request-instance";
 import {CUSTOM_API_ENDPOINT_ACTIVITIES} from "../constants/api";
 import {AxiosError} from "axios";
 import {PagedActivityRequest, PagedActivityResponse} from "../models/paged-activity";

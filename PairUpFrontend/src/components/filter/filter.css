@@ -1,11 +1,10 @@
-/* Custom styles for the checkbox and label */
 .form-check.clickable {
     cursor: pointer;
 }
 
 .card-hover:hover {
-    background-color: #f0f0f0; /* Hover background color */
-    transform: scale(1.01); /* Slightly scale the card */
+    background-color: #f0f0f0;
+    transform: scale(1.01);
     transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
