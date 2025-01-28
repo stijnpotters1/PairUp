@@ -1,4 +1,4 @@
-namespace PairUpCore.Exceptions;
+namespace PairUpShared.Middleware.GeneralExceptions;
 
 public class AlreadyExistsException : Exception
 {

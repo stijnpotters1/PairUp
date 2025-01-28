@@ -5,9 +5,9 @@
 public class SubLevelCategoryController : ControllerBase
 {
     private readonly ISubLevelCategoryRepository _repository;
-    private readonly IService<SubLevelCategory, SubLevelCategoryResponse> _service;
+    private readonly IServices<SubLevelCategory, SubLevelCategoryResponse> _service;
 
-    public SubLevelCategoryController(ISubLevelCategoryRepository repository, IService<SubLevelCategory, SubLevelCategoryResponse> service)
+    public SubLevelCategoryController(ISubLevelCategoryRepository repository, IServices<SubLevelCategory, SubLevelCategoryResponse> service)
     {
         _repository = repository;
         _service = service;

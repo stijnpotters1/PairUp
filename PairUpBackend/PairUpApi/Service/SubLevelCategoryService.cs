@@ -1,6 +1,6 @@
 ﻿namespace PairUpApi.Service;
 
-public class SubLevelCategoryService : IService<SubLevelCategory, SubLevelCategoryResponse>
+public class SubLevelCategoryService : IServices<SubLevelCategory, SubLevelCategoryResponse>
 {
     private readonly IMapper _mapper;
 

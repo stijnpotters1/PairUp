@@ -1,4 +1,6 @@
-﻿namespace PairUpApi.Configuration;
+﻿using PairUpApi.Configuration.Seeder;
+
+namespace PairUpApi.Configuration;
 
 public static class ServiceContainer
 {
@@ -17,8 +19,8 @@ public static class ServiceContainer
         // Add httpclient
         services.AddHttpClient();
         
-        // Add swagger configuration 
-        services.AddSwaggerGen();
+        // Add swagger configuration + authentication 
+        services.ConfigureSwagger();
 
         // Configure HTTPS redirection
         services.AddHttpsRedirection(options => { options.HttpsPort = 443; });
@@ -28,14 +30,27 @@ public static class ServiceContainer
         
         // Automapper Configuration
         services.ConfigureMapping();
+        
+        // Authentication Configuration
+        services.ConfigureAuthentication(builder.Configuration);
+
+        // Role seeder Configuration
+        services.AddScoped<RoleSeeder>();
+        services.AddScoped<AdminUserSeeder>();
+
+        // Register the role seeding service
+        services.AddHostedService<SeedingService>();
 
         // Scoped custom services (Dependency injection for services and repositories)
-        services.AddScoped<IService<Activity, ActivityResponse>, ActivityService>();
+        services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IServices<Activity, ActivityResponse>, ActivityService>();
         services.AddScoped<IActivityRepository, ActivityRepository>();
-        services.AddScoped<IService<SubLevelCategory, SubLevelCategoryResponse>, SubLevelCategoryService>();
+        services.AddScoped<IServices<SubLevelCategory, SubLevelCategoryResponse>, SubLevelCategoryService>();
         services.AddScoped<ISubLevelCategoryRepository, SubLevelCategoryRepository>();
-
-        services.AddSingleton<HttpClient>();
+        services.AddScoped<IService<PairUpCore.Models.Role, RoleDto>, RoleService>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
         
         // Scraper registration
         services.AddScoped<BaseWebScraper, BijzonderPlekjeAccommodationScraper>();

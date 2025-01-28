@@ -5,9 +5,9 @@
 public class ActivityController : ControllerBase
 {
     private readonly IActivityRepository _repository;
-    private readonly IService<Activity, ActivityResponse> _service;
+    private readonly IServices<Activity, ActivityResponse> _service;
 
-    public ActivityController(IActivityRepository repository, IService<Activity, ActivityResponse> service)
+    public ActivityController(IActivityRepository repository, IServices<Activity, ActivityResponse> service)
     {
         _repository = repository;
         _service = service;

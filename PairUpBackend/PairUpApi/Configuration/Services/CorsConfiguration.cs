@@ -3,6 +3,8 @@
 public static class CorsConfiguration
 {
     private const string MyAllowSpecificOrigins = "AllowSpecificOrigins";
+    
+    //todo change the allowed origins when going to production
     private static readonly string[] AllowedOrigins = 
     {
         "http://localhost:5173"
