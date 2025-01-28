@@ -40,6 +40,10 @@ public class ExceptionHandlerMiddleware
                 statusCode = HttpStatusCode.BadRequest;
                 message = badRequestException.Message ?? "Invalid request data.";
                 break;
+            case UnauthorizedException unauthorizedException:
+                statusCode = HttpStatusCode.Forbidden;
+                message = unauthorizedException.Message;
+                break;
             default:
                 Console.WriteLine(error.Message);
                 break;
