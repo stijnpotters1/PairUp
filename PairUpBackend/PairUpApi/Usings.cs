@@ -7,11 +7,11 @@ global using PairUpInfrastructure.Repositories;
 
 global using PairUpCore.Interfaces;
 global using PairUpCore.Models;
+global using PairUpCore.DTO;
 global using PairUpCore.DTO.Requests;
 global using PairUpCore.DTO.Responses;
 
 global using PairUpScraper;
-global using PairUpScraper.Interfaces;
 global using PairUpScraper.Scrapers.BijzonderPlekjeScraper;
 
 global using PairUpShared.Middleware;
