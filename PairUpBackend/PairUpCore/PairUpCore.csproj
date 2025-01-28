@@ -11,4 +11,8 @@
       <ProjectReference Include="..\PairUpShared\PairUpShared.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="v24.OpenApi.Models" Version="2.0.45" />
+    </ItemGroup>
+
 </Project>

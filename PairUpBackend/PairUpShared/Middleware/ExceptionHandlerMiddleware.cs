@@ -42,7 +42,7 @@ public class ExceptionHandlerMiddleware
                 break;
             case UnauthorizedException unauthorizedException:
                 statusCode = HttpStatusCode.Forbidden;
-                message = unauthorizedException.Message;
+                message = unauthorizedException.Message ?? "Unauthorized for this request";
                 break;
             default:
                 Console.WriteLine(error.Message);

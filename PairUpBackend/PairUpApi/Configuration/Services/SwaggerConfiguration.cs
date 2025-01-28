@@ -9,18 +9,20 @@ public static class SwaggerConfiguration
             swagger.SwaggerDoc("v1", new OpenApiInfo
             {
                 Version = "v1",
-                Title = "Meal Radar Web API"
+                Title = "Meal Radar Web API",
+                Description = "API for managing Meal Radar resources"
             });
-            
+
             swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 Name = "Authorization",
-                Type = SecuritySchemeType.ApiKey,
+                Type = SecuritySchemeType.Http,
                 Scheme = "Bearer",
                 BearerFormat = "JWT",
-                In = ParameterLocation.Header
+                In = ParameterLocation.Header,
+                Description = "Just paste your JWT token here without the 'Bearer' prefix. It will be added automatically."
             });
-            
+
             swagger.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
                 {
@@ -31,10 +33,12 @@ public static class SwaggerConfiguration
                             Type = ReferenceType.SecurityScheme,
                             Id = "Bearer"
                         }
-                    }, Array.Empty<string>()
+                    },
+                    Array.Empty<string>()
                 }
             });
-            
+
+            swagger.OperationFilter<AddBearerTokenOperationFilter>();
         });
 
         return services;

@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-
-namespace PairUpApi.Configuration.Role;
+﻿namespace PairUpApi.Configuration.Role;
 
 public class RoleRequirement : IAuthorizationRequirement
 {

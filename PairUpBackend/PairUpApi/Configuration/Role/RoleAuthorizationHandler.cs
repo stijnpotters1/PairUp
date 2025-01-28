@@ -11,8 +11,9 @@ public class RoleAuthorizationHandler : AuthorizationHandler<RoleRequirement>
 
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, RoleRequirement requirement)
     {
+        // Fetch userId claim
         var userIdClaim = context.User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
-    
+
         if (userIdClaim == null)
         {
             context.Fail();
@@ -28,8 +29,8 @@ public class RoleAuthorizationHandler : AuthorizationHandler<RoleRequirement>
             context.Fail();
             return;
         }
-        
-        if (requirement.Roles.Contains(user.Role.Name))
+
+        if (requirement.Roles.Contains(user.Role.Name.Trim(), StringComparer.OrdinalIgnoreCase))
         {
             context.Succeed(requirement);
         }

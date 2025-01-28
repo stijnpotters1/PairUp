@@ -7,6 +7,7 @@ global using PairUpApi.Configuration.Seeder;
 global using PairUpInfrastructure.Data;
 global using PairUpInfrastructure.Repositories;
 
+global using PairUpCore.Filter;
 global using PairUpCore.Interfaces;
 global using PairUpCore.Models;
 global using PairUpCore.DTO;
