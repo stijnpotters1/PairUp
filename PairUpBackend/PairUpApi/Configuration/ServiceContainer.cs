@@ -1,6 +1,4 @@
-﻿using PairUpApi.Configuration.Seeder;
-
-namespace PairUpApi.Configuration;
+﻿namespace PairUpApi.Configuration;
 
 public static class ServiceContainer
 {

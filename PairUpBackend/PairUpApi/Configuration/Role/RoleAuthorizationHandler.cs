@@ -3,12 +3,10 @@
 public class RoleAuthorizationHandler : AuthorizationHandler<RoleRequirement>
 {
     private readonly DataContext _context;
-    private readonly ILogger<RoleAuthorizationHandler> _logger;
 
-    public RoleAuthorizationHandler(DataContext context, ILogger<RoleAuthorizationHandler> logger)
+    public RoleAuthorizationHandler(DataContext context)
     {
         _context = context;
-        _logger = logger;
     }
 
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, RoleRequirement requirement)

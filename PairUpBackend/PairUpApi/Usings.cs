@@ -2,6 +2,7 @@
 global using PairUpApi.Configuration.Services;
 global using PairUpApi.Configuration;
 global using PairUpApi.Service;
+global using PairUpApi.Configuration.Seeder;
 
 global using PairUpInfrastructure.Data;
 global using PairUpInfrastructure.Repositories;
