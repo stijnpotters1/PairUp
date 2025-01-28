@@ -28,7 +28,7 @@ const Users: React.FunctionComponent = () => {
         firstName: '',
         lastName: '',
         email: '',
-        password: '',  // Keep the password field empty for now
+        password: '',
         roleId: ''
     });
 
@@ -76,7 +76,7 @@ const Users: React.FunctionComponent = () => {
             firstName: '',
             lastName: '',
             email: '',
-            password: '',  // Reset password
+            password: '',
             roleId: ''
         });
     };
@@ -88,7 +88,7 @@ const Users: React.FunctionComponent = () => {
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email,
-                password: '',  // Keep the password field empty for updates
+                password: '',
                 roleId: user.role.id
             } : {
                 firstName: '',
@@ -103,7 +103,7 @@ const Users: React.FunctionComponent = () => {
             setDeleteModalOpen(true);
         } else if (modalType === 'add') {
             setSelectedUser(null);
-            resetFormData();  // Reset form data for adding a new user
+            resetFormData();
             setAddModalOpen(true);
         }
     };
@@ -122,7 +122,6 @@ const Users: React.FunctionComponent = () => {
             roleId: data.roleId,
         };
 
-        // Update form data only if changed
         if (JSON.stringify(formData) !== JSON.stringify(userData) || isFormValid !== isValid) {
             setFormData(userData);
             setFormValid(isValid);
@@ -133,11 +132,10 @@ const Users: React.FunctionComponent = () => {
         if (selectedUser) {
             updateUserMutation.mutate(selectedUser.id);
         } else {
-            createUserMutation.mutate(formData); // Create user
+            createUserMutation.mutate(formData);
         }
     };
 
-    // Function to check if the form data is unchanged
     const isFormUnchanged = () => {
         if (selectedUser) {
             return (
@@ -145,10 +143,10 @@ const Users: React.FunctionComponent = () => {
                 formData.lastName === selectedUser.lastName &&
                 formData.email === selectedUser.email &&
                 formData.roleId === selectedUser.role.id &&
-                !formData.password // Ignore password in comparison
+                !formData.password
             );
         }
-        return false; // If no selected user, consider it changed for add case
+        return false;
     };
 
     const isLoading = isLoadingUsers || isLoadingRoles || deleteUserMutation.isLoading || updateUserMutation.isLoading || createUserMutation.isLoading;
