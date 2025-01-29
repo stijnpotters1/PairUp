@@ -28,7 +28,7 @@ const Login: React.FC = () => {
             const user = await loginAsync(loginData, rememberMe);
             if (user) {
                 setUser(user);
-                navigate('/recipe/radar');
+                navigate('/trips');
                 toast.success("Logged in successfully");
             } else {
                 toast.error("Login failed. No user returned.");

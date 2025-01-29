@@ -34,7 +34,7 @@ const Register: React.FC = () => {
             const user = await registerAsync(registerData, rememberMe);
             if (user) {
                 setUser(user);
-                navigate('/recipe/radar'); // Use absolute path
+                navigate('/trips');
                 toast.success("Registered and logged in successfully");
             } else {
                 toast.error("Registration failed. No user returned.");

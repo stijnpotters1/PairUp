@@ -47,7 +47,7 @@ export const registerAsync = async (registerRequest: RegisterRequest, rememberMe
 
 export const logout = (): void => {
     removeToken();
-    window.location.href = '/recipe/radar';
+    window.location.href = '/trips';
 };
 
 export const isAuthenticated = (): boolean => {
