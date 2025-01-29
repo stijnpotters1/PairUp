@@ -9,14 +9,20 @@ import { TopLevelCategory } from "../models/top-level-category";
 import { capitalize } from "../utils/capitalize";
 import Spinner from "../components/spinner/spinner";
 import { getSubLevelCategories } from "../services/sub-level-category-service";
-import { getPagedActivities } from "../services/activity-service";
+import {getPagedActivities, likeActivityAsync, unlikeActivityAsync} from "../services/activity-service";
 import { PagedActivityRequest } from "../models/paged-activity";
 import "../components/filter/filter.css";
+import {useUser} from "../hooks/user-auth";
+import {toast} from "react-toastify";
+import {Activity} from "../models/activity";
 
 const PageContainer: React.FunctionComponent = ({ setActivities }) => {
     const DEFAULT_RADIUS = 30;
     const DEFAULT_PAGE_NUMBER = 1;
     const DEFAULT_PAGE_SIZE = 20;
+
+    const { getUser, setUser } = useUser();
+    const user = getUser();
 
     const [radius, setRadius] = useState<number>(DEFAULT_RADIUS);
     const [topLevelCategories, setTopLevelCategories] = useState<number[]>([]);
@@ -35,6 +41,10 @@ const PageContainer: React.FunctionComponent = ({ setActivities }) => {
     const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
 
     const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+
+    const [likedActivities, setLikedActivities] = useState<{ [key: string]: boolean }>({});
+    const [isUnlikeModalOpen, setUnlikeModalOpen] = useState<boolean>(false);
+    const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
 
     const { data: fetchedSubLevelCategories, isLoading: isSubLevelLoading } = useQuery(
         "subLevelCategories",
@@ -150,6 +160,56 @@ const PageContainer: React.FunctionComponent = ({ setActivities }) => {
 
     const maxPages = Math.ceil(data?.totalCount / pageSize);
 
+    const handleLikeToggle = async (activity: Activity) => {
+        if (!user) {
+            toast.error("You have to be logged in to like an activity.");
+            return;
+        }
+
+        const currentlyLiked = likedActivities[activity.id];
+
+        if (currentlyLiked) {
+            setSelectedActivity(activity);
+            setUnlikeModalOpen(true);
+        } else {
+            setLikedActivities((prev) => ({ ...prev, [activity.id]: true }));
+
+            try {
+                const likedActivity = await likeActivityAsync(user.id, activity);
+                setUser({
+                    ...user,
+                    likedActivities: [...user.likedActivities, likedActivity],
+                });
+            } catch (error) {
+                setLikedActivities((prev) => ({ ...prev, [activity.id]: false }));
+                toast.error('Error liking the activity: ' + error.message);
+            }
+        }
+    };
+
+    const confirmUnlikeRecipe = async () => {
+        if (!user || !selectedActivity) return;
+
+        try {
+            const success = await unlikeActivityAsync(user.id, selectedActivity.id);
+            if (success) {
+                setLikedActivities((prev) => ({
+                    ...prev,
+                    [selectedActivity.id]: false,
+                }));
+
+                setUser({
+                    ...user,
+                    likedActivities: user.likedActivities.filter(r => r.id !== selectedActivity.id),
+                });
+            }
+            setUnlikeModalOpen(false);
+            setSelectedActivity(null);
+        } catch (error) {
+            toast.error('Error unliking the activity: ' + error.message);
+        }
+    };
+
     return (
         <Container className="custom-container px-md-0 px-4 py-3 navigation-margin">
             <Row>
@@ -200,7 +260,6 @@ const PageContainer: React.FunctionComponent = ({ setActivities }) => {
                                     )}
                                 </div>
 
-                                {/* Categories filter */}
                                 <div className="mb-3 ms-1">
                                     <div
                                         className="filter-toggle d-flex justify-content-between"
@@ -347,13 +406,22 @@ const PageContainer: React.FunctionComponent = ({ setActivities }) => {
                                                                         <div className="card-body justify-content-between">
                                                                             <h5 className="card-title">{activity.name}</h5>
                                                                             <p className="card-text">{activity.description}</p>
-                                                                            <div className="d-flex justify-content-end">
+                                                                            <div className="d-flex gap-3 justify-content-end">
+                                                                                {likedActivities[activity.id] ? (
+                                                                                    <i
+                                                                                        className="bi bi-heart-fill cursor-pointer text-danger fs-4"
+                                                                                        onClick={() => handleLikeToggle(activity)}
+                                                                                    ></i>
+                                                                                ) : (
+                                                                                    <i
+                                                                                        className="bi bi-heart cursor-pointer fs-4"
+                                                                                        onClick={() => handleLikeToggle(activity)}
+                                                                                    ></i>
+                                                                                )}
                                                                                 <i className="bi bi-chevron-right" />
                                                                             </div>
                                                                         </div>
                                                                     </div>
-
-                                                                    //todo change the above card, and make it use up all the space
 
                                                                 </div>
                                                             </div>
