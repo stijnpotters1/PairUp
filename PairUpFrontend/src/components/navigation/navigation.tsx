@@ -28,12 +28,6 @@ const Navigation: React.FunctionComponent = () => {
                         Trips
                     </NavItem>
 
-                    {isAuthenticated() && isAdmin && (
-                        <NavItem to="/users">
-                            Users
-                        </NavItem>
-                    )}
-
                     {isAuthenticated() ? (
                         <>
                             <NavItem to="/liked">
@@ -43,6 +37,12 @@ const Navigation: React.FunctionComponent = () => {
                             <NavItem to="/profile">
                                 Profile
                             </NavItem>
+
+                            {isAdmin && (
+                                <NavItem to="/users">
+                                    Users
+                                </NavItem>
+                            )}
 
                             <NavItem to="/logout" onClick={() => logout()}>
                                 Logout
