@@ -18,9 +18,9 @@ export const getPagedActivities = async (pagedActivityRequest: PagedActivityRequ
     }
 };
 
-export const likeActivityAsync = async (userId: string, activity: Activity): Promise<Activity> => {
+export const likeActivityAsync = async (userId: string, activityId: string): Promise<Activity> => {
     try {
-        const response = await axiosInstance.post(`${API_ENDPOINT_ACTIVITIES_LIKE}/${userId}`, activity);
+        const response = await axiosInstance.get(`${API_ENDPOINT_ACTIVITIES_LIKE}/${userId}/activity/${activityId}`);
         return response.data as Activity;
     } catch (error) {
         const axiosError = error as AxiosError<ErrorResponse>;
@@ -30,7 +30,7 @@ export const likeActivityAsync = async (userId: string, activity: Activity): Pro
 
 export const unlikeActivityAsync = async (userId: string, activityId: string): Promise<boolean> => {
     try {
-        const response = await axiosInstance.delete(`${API_ENDPOINT_ACTIVITIES_UNLIKE}/${userId}/activityId/${activityId}`);
+        const response = await axiosInstance.delete(`${API_ENDPOINT_ACTIVITIES_UNLIKE}/${userId}/activity/${activityId}`);
         return response.data as boolean;
     } catch (error) {
         const axiosError = error as AxiosError<ErrorResponse>;

@@ -175,7 +175,7 @@ const PageContainer: React.FunctionComponent = ({ setActivities }) => {
             setLikedActivities((prev) => ({ ...prev, [activity.id]: true }));
 
             try {
-                const likedActivity = await likeActivityAsync(user.id, activity);
+                const likedActivity = await likeActivityAsync(user.id, activity.id);
                 setUser({
                     ...user,
                     likedActivities: [...user.likedActivities, likedActivity],
