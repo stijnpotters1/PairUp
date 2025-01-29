@@ -1,9 +1,9 @@
-import {CUSTOM_API_BASE_URL} from "../constants/api";
+import {API_BASE_URL} from "../constants/api";
 import axios from "axios";
 import {getToken} from "../utils/jwt-helper";
 
 const axiosInstance = axios.create({
-    baseURL: CUSTOM_API_BASE_URL,
+    baseURL: API_BASE_URL,
     headers: {
         'Content-Type': 'application/json',
     },

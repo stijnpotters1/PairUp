@@ -1,18 +1,20 @@
 // API Base url
-export const CUSTOM_API_BASE_URL = 'https://localhost:7247/api';
+export const API_BASE_URL = 'https://localhost:7247/api';
 
 // Authentication
-export const CUSTOM_API_ENDPOINT_AUTH_REGISTER = `${CUSTOM_API_BASE_URL}/Authentication/register`;
-export const CUSTOM_API_ENDPOINT_AUTH_LOGIN = `${CUSTOM_API_BASE_URL}/Authentication/login`;
+export const API_ENDPOINT_AUTH_REGISTER = `${API_BASE_URL}/Authentication/register`;
+export const API_ENDPOINT_AUTH_LOGIN = `${API_BASE_URL}/Authentication/login`;
 
 // Users
-export const CUSTOM_API_ENDPOINT_USER = `${CUSTOM_API_BASE_URL}/User`;
+export const API_ENDPOINT_USER = `${API_BASE_URL}/User`;
 
 // Roles
-export const CUSTOM_API_ENDPOINT_ROLE = `${CUSTOM_API_BASE_URL}/Role`;
+export const API_ENDPOINT_ROLE = `${API_BASE_URL}/Role`;
 
 // Activities
-export const CUSTOM_API_ENDPOINT_ACTIVITIES = `${CUSTOM_API_BASE_URL}/Activity`;
+export const API_ENDPOINT_ACTIVITIES = `${API_BASE_URL}/Activity`;
+export const API_ENDPOINT_ACTIVITIES_LIKE = `${API_ENDPOINT_ACTIVITIES}/like`;
+export const API_ENDPOINT_ACTIVITIES_UNLIKE = `${API_ENDPOINT_ACTIVITIES}/unlike`;
 
 // Sub Categories
-export const CUSTOM_API_ENDPOINT_SUB_LEVEL_CATEGORIES = `${CUSTOM_API_BASE_URL}/SubLevelCategory`;
+export const API_ENDPOINT_SUB_LEVEL_CATEGORIES = `${API_BASE_URL}/SubLevelCategory`;

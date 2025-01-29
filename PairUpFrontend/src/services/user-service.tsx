@@ -1,12 +1,12 @@
 import axiosInstance from './request-instance';
-import { CUSTOM_API_ENDPOINT_USER } from '../constants/api';
+import { API_ENDPOINT_USER } from '../constants/api';
 import {UserRequest, UserResponse} from "../models/user";
 import {AxiosError} from "axios";
 import {ErrorResponse} from "../models/error";
 
 export const getUsersAsync = async () : Promise<UserResponse[]> => {
     try {
-        const response = await axiosInstance.get(CUSTOM_API_ENDPOINT_USER);
+        const response = await axiosInstance.get(API_ENDPOINT_USER);
         return response.data as UserResponse[];
     } catch (error) {
         const axiosError = error as AxiosError<ErrorResponse>;
@@ -16,7 +16,7 @@ export const getUsersAsync = async () : Promise<UserResponse[]> => {
 
 export const getUserAsync = async (userId: string) : Promise<UserResponse> => {
     try {
-        const response = await axiosInstance.get(`${CUSTOM_API_ENDPOINT_USER}/${userId}`);
+        const response = await axiosInstance.get(`${API_ENDPOINT_USER}/${userId}`);
         return response.data as UserResponse;
     } catch (error) {
         const axiosError = error as AxiosError<ErrorResponse>;
@@ -26,7 +26,7 @@ export const getUserAsync = async (userId: string) : Promise<UserResponse> => {
 
 export const postUserAsync = async (user: UserRequest) : Promise<UserResponse> => {
     try {
-        const response = await axiosInstance.post(CUSTOM_API_ENDPOINT_USER, user);
+        const response = await axiosInstance.post(API_ENDPOINT_USER, user);
         return response.data as UserResponse;
     } catch (error) {
         const axiosError = error as AxiosError<ErrorResponse>;
@@ -36,7 +36,7 @@ export const postUserAsync = async (user: UserRequest) : Promise<UserResponse> =
 
 export const updateUserAsync = async (userId: string, updatedUser: UserRequest) : Promise<UserResponse> => {
     try {
-        const response = await axiosInstance.put(`${CUSTOM_API_ENDPOINT_USER}/${userId}`, updatedUser);
+        const response = await axiosInstance.put(`${API_ENDPOINT_USER}/${userId}`, updatedUser);
         return response.data as UserResponse;
     } catch (error) {
         const axiosError = error as AxiosError<ErrorResponse>;
@@ -46,7 +46,7 @@ export const updateUserAsync = async (userId: string, updatedUser: UserRequest) 
 
 export const deleteUserAsync = async (userId: string) : Promise<boolean> => {
     try {
-        const response = await axiosInstance.delete(`${CUSTOM_API_ENDPOINT_USER}/${userId}`);
+        const response = await axiosInstance.delete(`${API_ENDPOINT_USER}/${userId}`);
         return response.data as boolean;
     } catch (error) {
         const axiosError = error as AxiosError<ErrorResponse>;

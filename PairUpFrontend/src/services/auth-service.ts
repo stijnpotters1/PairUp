@@ -1,5 +1,8 @@
 import axiosInstance from './request-instance';
-import {CUSTOM_API_ENDPOINT_AUTH_LOGIN, CUSTOM_API_ENDPOINT_AUTH_REGISTER} from '../constants/api';
+import {
+    API_ENDPOINT_AUTH_LOGIN,
+    API_ENDPOINT_AUTH_REGISTER
+} from '../constants/api';
 import { decodeToken, saveToken, removeToken, isTokenExpired, getToken } from '../utils/jwt-helper';
 import { UserResponse } from '../models/user';
 import {getUserAsync} from './user-service';
@@ -9,7 +12,7 @@ import {ErrorResponse} from "../models/error";
 
 export const loginAsync = async (loginRequest: LoginRequest, rememberMe: boolean): Promise<UserResponse | null> => {
     try {
-        const response = await axiosInstance.post<AuthenticationResponse>(CUSTOM_API_ENDPOINT_AUTH_LOGIN, loginRequest);
+        const response = await axiosInstance.post<AuthenticationResponse>(API_ENDPOINT_AUTH_LOGIN, loginRequest);
 
         const { token } = response.data;
 
@@ -28,7 +31,7 @@ export const loginAsync = async (loginRequest: LoginRequest, rememberMe: boolean
 
 export const registerAsync = async (registerRequest: RegisterRequest, rememberMe: boolean): Promise<UserResponse | null> => {
     try {
-        const response = await axiosInstance.post<AuthenticationResponse>(CUSTOM_API_ENDPOINT_AUTH_REGISTER, registerRequest);
+        const response = await axiosInstance.post<AuthenticationResponse>(API_ENDPOINT_AUTH_REGISTER, registerRequest);
 
         const { token } = response.data;
 
