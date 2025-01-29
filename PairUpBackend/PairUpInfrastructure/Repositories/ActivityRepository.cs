@@ -1,4 +1,6 @@
-﻿namespace PairUpInfrastructure.Repositories;
+﻿using PairUpCore.Exceptions.Activity;
+
+namespace PairUpInfrastructure.Repositories;
 
 public class ActivityRepository : IActivityRepository
 {
@@ -29,6 +31,56 @@ public class ActivityRepository : IActivityRepository
             PageNumber = requirements.PageNumber,
             PageSize = requirements.PageSize
         };
+    }
+    
+    public async Task<Activity> AddLikeAsync(Guid userId, Guid activityId)
+    {
+        User? user = await _context.Users.Include(us => us.LikedActivities).FirstOrDefaultAsync(us => us.Id == userId);
+        if (user == null)
+        {
+            throw new UserNotFoundException();
+        }
+
+        Activity? activity = await _context.Activities.FirstOrDefaultAsync(ac => ac.Id == activityId);
+        if (activity == null)
+        {
+            throw new ActivityNotFoundException();
+        }
+
+        if (user.LikedActivities.Any(ac => ac.Id == activityId))
+        {
+            throw new ActivityIsAlreadyLikedByThisUserException();
+        }
+        
+        user.LikedActivities.Add(activity);
+        await _context.SaveChangesAsync();
+
+        return activity;
+    }
+
+    public async Task<bool> RemoveLikeAsync(Guid userId, Guid activityId)
+    {
+        User? user = await _context.Users.Include(u => u.LikedActivities).FirstOrDefaultAsync(u => u.Id == userId);
+        if (user == null)
+        {
+            throw new UserNotFoundException();
+        }
+
+        Activity? activity = await _context.Activities.FirstOrDefaultAsync(ac => ac.Id == activityId);
+        if (activity == null)
+        {
+            throw new ActivityNotFoundException();
+        }
+
+        if (user.LikedActivities.Any(ac => ac.Id != activityId))
+        {
+            throw new ActivityIsNotLikedByThisUserException();
+        }
+        
+        user.LikedActivities.Remove(activity);
+
+        await _context.SaveChangesAsync();
+        return true;
     }
 
     private IQueryable<Activity> BuildQuery(ActivityRequest requirements)
