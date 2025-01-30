@@ -30,7 +30,7 @@ public class ActivityController : ControllerBase
         return Ok(activityResponse);
     }
     
-    [HttpPost("like/{userId}/activity/{activityId}")]
+    [HttpGet("like/{userId}/activity/{activityId}")]
     [Authorize(Policy = "UserOrAdmin")]
     public async Task<ActionResult<ActivityResponse>> LikeActivity(Guid userId, Guid activityId)
     {
