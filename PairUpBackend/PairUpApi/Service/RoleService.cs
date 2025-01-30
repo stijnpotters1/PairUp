@@ -16,6 +16,6 @@ public class RoleService : IService<Role, RoleDto>
 
     public IEnumerable<RoleDto> ConvertToResponse(IEnumerable<Role> entities)
     {
-        throw new NotImplementedException();
+        throw new NotSupportedException();
     }
 }
