@@ -72,7 +72,7 @@ public class ActivityRepository : IActivityRepository
             throw new ActivityNotFoundException();
         }
 
-        if (user.LikedActivities.Any(ac => ac.Id != activityId))
+        if (user.LikedActivities.All(ac => ac.Id != activityId))
         {
             throw new ActivityIsNotLikedByThisUserException();
         }
