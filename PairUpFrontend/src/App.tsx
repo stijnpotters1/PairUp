@@ -9,6 +9,7 @@ import Profile from "./components/profile/profile";
 import {Activity} from "./models/activity";
 import Register from "./components/register/register";
 import Login from "./components/login/login";
+import {ToastContainer} from "react-toastify";
 
 const App: React.FC = () => {
     const [activities, setActivities] = useState<Activity[]>([]);
@@ -29,6 +30,7 @@ const App: React.FC = () => {
                     </Routes>
                 </div>
             </Router>
+            <ToastContainer className="navigation-margin" />
         </UserProvider>
     );
 };
