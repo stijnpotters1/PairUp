@@ -1,6 +1,6 @@
 ﻿namespace PairUpApi.Service;
 
-public class ActivityService : IServices<Activity, ActivityResponse>
+public class ActivityService : IService<Activity, ActivityResponse>
 {
     private readonly IMapper _mapper;
 
@@ -9,7 +9,7 @@ public class ActivityService : IServices<Activity, ActivityResponse>
         _mapper = mapper;
     }
     
-    private ActivityResponse ConvertToResponse(Activity activity)
+    public ActivityResponse ConvertToResponse(Activity activity)
     {
         return _mapper.Map<ActivityResponse>(activity);
     }

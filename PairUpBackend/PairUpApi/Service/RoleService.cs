@@ -13,4 +13,9 @@ public class RoleService : IService<Role, RoleDto>
     {
         return _mapper.Map<RoleDto>(role);
     }
+
+    public IEnumerable<RoleDto> ConvertToResponse(IEnumerable<Role> entities)
+    {
+        throw new NotImplementedException();
+    }
 }

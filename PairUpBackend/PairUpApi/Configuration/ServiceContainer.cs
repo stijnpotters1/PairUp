@@ -43,9 +43,9 @@ public static class ServiceContainer
         services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IServices<Activity, ActivityResponse>, ActivityService>();
+        services.AddScoped<IService<Activity, ActivityResponse>, ActivityService>();
         services.AddScoped<IActivityRepository, ActivityRepository>();
-        services.AddScoped<IServices<SubLevelCategory, SubLevelCategoryResponse>, SubLevelCategoryService>();
+        services.AddScoped<IService<SubLevelCategory, SubLevelCategoryResponse>, SubLevelCategoryService>();
         services.AddScoped<ISubLevelCategoryRepository, SubLevelCategoryRepository>();
         services.AddScoped<IService<PairUpCore.Models.Role, RoleDto>, RoleService>();
         services.AddScoped<IRoleRepository, RoleRepository>();
