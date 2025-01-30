@@ -99,6 +99,19 @@ const PageContainer: React.FunctionComponent = ({ setActivities }) => {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+    useEffect(() => {
+        if (!user) return;
+
+        const likedState: { [key: string]: boolean } = {};
+
+        user.likedActivities.forEach((activity) => {
+            likedState[activity.id] = true;
+        });
+
+        setLikedActivities(likedState);
+    }, [user]);
+
+
     const handleRadiusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setRadius(Number(e.target.value));
     };
@@ -161,7 +174,9 @@ const PageContainer: React.FunctionComponent = ({ setActivities }) => {
 
     const maxPages = Math.ceil(data?.totalCount / pageSize);
 
-    const handleLikeToggle = async (activity: Activity) => {
+    const handleLikeToggle = async (activity: Activity, e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault();
+
         if (!user) {
             toast.error("You have to be logged in to like an activity.");
             return;
@@ -173,17 +188,18 @@ const PageContainer: React.FunctionComponent = ({ setActivities }) => {
             setSelectedActivity(activity);
             setUnlikeModalOpen(true);
         } else {
-            setLikedActivities((prev) => ({ ...prev, [activity.id]: true }));
-
             try {
                 const likedActivity = await likeActivityAsync(user.id, activity.id);
+
+                setLikedActivities((prev) => ({ ...prev, [activity.id]: true }));
+
                 setUser({
                     ...user,
                     likedActivities: [...user.likedActivities, likedActivity],
                 });
             } catch (error) {
                 setLikedActivities((prev) => ({ ...prev, [activity.id]: false }));
-                toast.error('Error liking the activity: ' + error.message);
+                toast.error(error.message);
             }
         }
     };
@@ -193,6 +209,7 @@ const PageContainer: React.FunctionComponent = ({ setActivities }) => {
 
         try {
             const success = await unlikeActivityAsync(user.id, selectedActivity.id);
+
             if (success) {
                 setLikedActivities((prev) => ({
                     ...prev,
@@ -408,17 +425,10 @@ const PageContainer: React.FunctionComponent = ({ setActivities }) => {
                                                                                 <h5 className="card-title">{activity.name}</h5>
                                                                                 <p className="card-text">{activity.description}</p>
                                                                                 <div className="d-flex gap-3 justify-content-end">
-                                                                                    {likedActivities[activity.id] ? (
-                                                                                        <i
-                                                                                            className="bi bi-heart-fill cursor-pointer text-danger fs-4"
-                                                                                            onClick={() => handleLikeToggle(activity)}
-                                                                                        ></i>
-                                                                                    ) : (
-                                                                                        <i
-                                                                                            className="bi bi-heart cursor-pointer fs-4"
-                                                                                            onClick={() => handleLikeToggle(activity)}
-                                                                                        ></i>
-                                                                                    )}
+                                                                                    <i
+                                                                                        className={`bi bi-heart${likedActivities[activity.id] ? "-fill text-danger" : ""} cursor-pointer fs-4`}
+                                                                                        onClick={(e) => handleLikeToggle(activity, e)}
+                                                                                    ></i>
                                                                                     <i className="bi bi-chevron-right" />
                                                                                 </div>
                                                                             </div>
