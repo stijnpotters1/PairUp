@@ -478,7 +478,7 @@ const PageContainer: React.FunctionComponent = ({ setActivities }) => {
                 confirmDisabled={false}
             >
                 <div className="px-3 py-4 bg-danger bg-opacity-25">
-                    <p className="mb-0">Are you sure you want to unlike this recipe?</p>
+                    <p className="mb-0">Are you sure you want to unlike this activity?</p>
                 </div>
             </GenericModal>
         </Container>
