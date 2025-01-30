@@ -344,7 +344,6 @@ const PageContainer: React.FunctionComponent = ({ setActivities }) => {
                                     )}
                                 </div>
 
-                                {/* Apply Filters Button */}
                                 <button
                                     className={`w-50 btn btn-primary mb-4 ms-1 ${isFilterChanged ? "active" : ""}`}
                                     onClick={applyFilters}
@@ -394,59 +393,61 @@ const PageContainer: React.FunctionComponent = ({ setActivities }) => {
                                                 <div className="row row-cols-1">
                                                     {data?.items?.map((activity) => (
                                                         <div key={activity.id} className="col mb-4">
-                                                            <div className="card animate__animated animate__fadeIn card-hover cursor-pointer">
-                                                                <div className="row g-0">
-                                                                    <div className="col-md-4">
-                                                                        <img
-                                                                            src={activity.image}
-                                                                            alt={activity.name}
-                                                                            className="card-img-top"
-                                                                        />
-                                                                    </div>
-                                                                    <div className="col-md-8">
-                                                                        <div className="card-body justify-content-between">
-                                                                            <h5 className="card-title">{activity.name}</h5>
-                                                                            <p className="card-text">{activity.description}</p>
-                                                                            <div className="d-flex gap-3 justify-content-end">
-                                                                                {likedActivities[activity.id] ? (
-                                                                                    <i
-                                                                                        className="bi bi-heart-fill cursor-pointer text-danger fs-4"
-                                                                                        onClick={() => handleLikeToggle(activity)}
-                                                                                    ></i>
-                                                                                ) : (
-                                                                                    <i
-                                                                                        className="bi bi-heart cursor-pointer fs-4"
-                                                                                        onClick={() => handleLikeToggle(activity)}
-                                                                                    ></i>
-                                                                                )}
-                                                                                <i className="bi bi-chevron-right" />
+                                                            <a href={activity.url} target="_blank" rel="noopener noreferrer" className="text-decoration-none">
+                                                                <div className="card animate__animated animate__fadeIn card-hover cursor-pointer">
+                                                                    <div className="row g-0">
+                                                                        <div className="col-md-4">
+                                                                            <img
+                                                                                src={activity.image}
+                                                                                alt={activity.name}
+                                                                                className="card-img-top"
+                                                                            />
+                                                                        </div>
+                                                                        <div className="col-md-8">
+                                                                            <div className="card-body justify-content-between">
+                                                                                <h5 className="card-title">{activity.name}</h5>
+                                                                                <p className="card-text">{activity.description}</p>
+                                                                                <div className="d-flex gap-3 justify-content-end">
+                                                                                    {likedActivities[activity.id] ? (
+                                                                                        <i
+                                                                                            className="bi bi-heart-fill cursor-pointer text-danger fs-4"
+                                                                                            onClick={() => handleLikeToggle(activity)}
+                                                                                        ></i>
+                                                                                    ) : (
+                                                                                        <i
+                                                                                            className="bi bi-heart cursor-pointer fs-4"
+                                                                                            onClick={() => handleLikeToggle(activity)}
+                                                                                        ></i>
+                                                                                    )}
+                                                                                    <i className="bi bi-chevron-right" />
+                                                                                </div>
                                                                             </div>
                                                                         </div>
+
                                                                     </div>
-
                                                                 </div>
+                                                                </a>
                                                             </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
+                                                        ))}
+                                                    </div>
 
-                                                <div className="d-flex justify-content-center">
-                                                    <button
-                                                        onClick={() => handlePageChange(pageNumber - 1)}
-                                                        disabled={pageNumber === 1}
-                                                        className="btn btn-outline-secondary me-2 rounded-2"
-                                                    >
-                                                        &lt;
-                                                    </button>
-                                                    <span className="align-self-center px-2">{pageNumber}</span>
-                                                    <button
-                                                        onClick={() => handlePageChange(pageNumber + 1)}
-                                                        disabled={isLoading || !data || pageNumber === maxPages}
-                                                        className="btn btn-outline-secondary ms-2 rounded-2"
-                                                    >
-                                                        &gt;
-                                                    </button>
-                                                </div>
+                                                    <div className="d-flex justify-content-center">
+                                                        <button
+                                                            onClick={() => handlePageChange(pageNumber - 1)}
+                                                            disabled={pageNumber === 1}
+                                                            className="btn btn-outline-secondary me-2 rounded-2"
+                                                        >
+                                                            &lt;
+                                                        </button>
+                                                        <span className="align-self-center px-2">{pageNumber}</span>
+                                                        <button
+                                                            onClick={() => handlePageChange(pageNumber + 1)}
+                                                            disabled={isLoading || !data || pageNumber === maxPages}
+                                                            className="btn btn-outline-secondary ms-2 rounded-2"
+                                                        >
+                                                            &gt;
+                                                        </button>
+                                                    </div>
                                             </div>
                                         )}
                                     </div>
