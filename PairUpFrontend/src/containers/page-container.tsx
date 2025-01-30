@@ -15,6 +15,7 @@ import "../components/filter/filter.css";
 import {useUser} from "../hooks/user-auth";
 import {toast} from "react-toastify";
 import {Activity} from "../models/activity";
+import GenericModal from "../components/generic-modal/generic-modal";
 
 const PageContainer: React.FunctionComponent = ({ setActivities }) => {
     const DEFAULT_RADIUS = 30;
@@ -457,6 +458,18 @@ const PageContainer: React.FunctionComponent = ({ setActivities }) => {
                     </CardContainer>
                 </Column>
             </Row>
+
+            <GenericModal
+                title="Confirm Unlike"
+                show={isUnlikeModalOpen}
+                handleClose={() => setUnlikeModalOpen(false)}
+                onConfirm={confirmUnlikeRecipe}
+                confirmDisabled={false}
+            >
+                <div className="px-3 py-4 bg-danger bg-opacity-25">
+                    <p className="mb-0">Are you sure you want to unlike this recipe?</p>
+                </div>
+            </GenericModal>
         </Container>
     );
 };
