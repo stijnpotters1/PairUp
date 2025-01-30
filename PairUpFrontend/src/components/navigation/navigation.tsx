@@ -34,15 +34,15 @@ const Navigation: React.FunctionComponent = () => {
                                 Liked
                             </NavItem>
 
-                            <NavItem to="/profile">
-                                Profile
-                            </NavItem>
-
                             {isAdmin && (
                                 <NavItem to="/users">
                                     Users
                                 </NavItem>
                             )}
+
+                            <NavItem to="/profile">
+                                Profile
+                            </NavItem>
 
                             <NavItem to="/logout" onClick={() => logout()}>
                                 Logout
