@@ -36,3 +36,4 @@ SEEDER_ROLES="Admin,User"```
 
 ### Completed?
 Once you are completed you can reach out to your local hosted application by browsing to ```http://localhost:5173``` 
+Note: when you start the application, the database only starts to fill using the scraper, so not all activities are already in the database from the start.
