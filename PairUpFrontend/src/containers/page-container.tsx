@@ -9,15 +9,22 @@ import { TopLevelCategory } from "../models/top-level-category";
 import { capitalize } from "../utils/capitalize";
 import Spinner from "../components/spinner/spinner";
 import { getSubLevelCategories } from "../services/sub-level-category-service";
-import {getPagedActivities, likeActivityAsync, unlikeActivityAsync} from "../services/activity-service";
+import { getPagedActivities, likeActivityAsync, unlikeActivityAsync } from "../services/activity-service";
 import { PagedActivityRequest } from "../models/paged-activity";
 import "../components/filter/filter.css";
-import {useUser} from "../hooks/user-auth";
-import {toast} from "react-toastify";
-import {Activity} from "../models/activity";
+import { useUser } from "../hooks/user-auth";
+import { toast } from "react-toastify";
+import { Activity } from "../models/activity";
 import GenericModal from "../components/generic-modal/generic-modal";
 
-const PageContainer: React.FunctionComponent = ({ setActivities }) => {
+interface PageContainerProps {
+    setActivities?: React.Dispatch<React.SetStateAction<Activity[]>>;
+    activities?: Activity[];
+}
+
+const PageContainer: React.FC<PageContainerProps> = ({ setActivities, activities }) => {
+    const isLikedMode = activities !== undefined;
+
     const DEFAULT_RADIUS = 30;
     const DEFAULT_PAGE_NUMBER = 1;
     const DEFAULT_PAGE_SIZE = 20;
@@ -53,7 +60,15 @@ const PageContainer: React.FunctionComponent = ({ setActivities }) => {
     );
 
     const { data, error, isLoading, isFetching, refetch } = useQuery(
-        ['activities', appliedRadius, appliedTopLevelCategories, appliedSubLevelCategories, location, pageNumber, pageSize],
+        [
+            "activities",
+            appliedRadius,
+            appliedTopLevelCategories,
+            appliedSubLevelCategories,
+            location,
+            pageNumber,
+            pageSize,
+        ],
         () => {
             const request: PagedActivityRequest = {
                 topLevelCategories: appliedTopLevelCategories,
@@ -68,13 +83,21 @@ const PageContainer: React.FunctionComponent = ({ setActivities }) => {
         },
         {
             keepPreviousData: true,
-            enabled: !!location,
+            enabled: !isLikedMode && !!location,
             refetchOnWindowFocus: false,
         }
     );
 
     useEffect(() => {
-        if ("geolocation" in navigator) {
+        if (user?.likedActivities) {
+            if (setActivities) {
+                setActivities(user.likedActivities);
+            }
+        }
+    }, [user])
+
+    useEffect(() => {
+        if (!isLikedMode && "geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     setLocation({
@@ -85,32 +108,27 @@ const PageContainer: React.FunctionComponent = ({ setActivities }) => {
                 (error) => console.error("Geolocation error:", error),
                 { enableHighAccuracy: true }
             );
-        } else {
-            console.error("Geolocation is not supported by this browser.");
         }
+        if (!isLikedMode) {
+            const handleResize = () => {
+                setIsFiltersOpen(window.matchMedia("(min-width: 768px)").matches);
+            };
 
-        const handleResize = () => {
-            setIsFiltersOpen(window.matchMedia("(min-width: 768px)").matches);
-        };
+            handleResize();
+            window.addEventListener("resize", handleResize);
 
-        handleResize();
-        window.addEventListener("resize", handleResize);
-
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
+            return () => window.removeEventListener("resize", handleResize);
+        }
+    }, [isLikedMode]);
 
     useEffect(() => {
         if (!user) return;
-
         const likedState: { [key: string]: boolean } = {};
-
         user.likedActivities.forEach((activity) => {
             likedState[activity.id] = true;
         });
-
         setLikedActivities(likedState);
     }, [user]);
-
 
     const handleRadiusChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setRadius(Number(e.target.value));
@@ -172,8 +190,11 @@ const PageContainer: React.FunctionComponent = ({ setActivities }) => {
         topLevelCategories.length !== 0 ||
         subLevelCategories.length !== 0;
 
-    const maxPages = Math.ceil(data?.totalCount / pageSize);
+    const maxPages = data ? Math.ceil(data.totalCount / pageSize) : 1;
 
+    // ------------------
+    // Common handler for like toggle
+    // ------------------
     const handleLikeToggle = async (activity: Activity, e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
 
@@ -193,11 +214,17 @@ const PageContainer: React.FunctionComponent = ({ setActivities }) => {
 
                 setLikedActivities((prev) => ({ ...prev, [activity.id]: true }));
 
+                // Update the user state
                 setUser({
                     ...user,
                     likedActivities: [...user.likedActivities, likedActivity],
                 });
-            } catch (error) {
+
+                // If in trips mode, update the global liked activities state
+                if (setActivities) {
+                    setActivities((prev) => [...prev, likedActivity]);
+                }
+            } catch (error: any) {
                 setLikedActivities((prev) => ({ ...prev, [activity.id]: false }));
                 toast.error(error.message);
             }
@@ -218,224 +245,274 @@ const PageContainer: React.FunctionComponent = ({ setActivities }) => {
 
                 setUser({
                     ...user,
-                    likedActivities: user.likedActivities.filter(r => r.id !== selectedActivity.id),
+                    likedActivities: user.likedActivities.filter((r) => r.id !== selectedActivity.id),
                 });
+
+                // If in trips mode, update the global liked activities state
+                if (setActivities) {
+                    setActivities((prev) => prev.filter((a) => a.id !== selectedActivity.id));
+                }
             }
             setUnlikeModalOpen(false);
             setSelectedActivity(null);
-        } catch (error) {
-            toast.error('Error unliking the activity: ' + error.message);
+        } catch (error: any) {
+            toast.error("Error unliking the activity: " + error.message);
         }
     };
 
     return (
         <Container className="custom-container px-md-0 px-4 py-3 navigation-margin">
             <Row>
-                <Column size="col-12 col-md-3 mb-md-4">
-                    <FilterContainer>
-                        <div className="d-flex justify-content-between align-items-center">
-                            <h4 className="ms-1 d-flex align-self-center">Filters</h4>
-                            <div className="d-flex flex-row gap-3">
-                                {isFilterChangedTowardsDefault && (
-                                    <div
-                                        className="d-flex align-items-center text-danger text-decoration-underline cursor-pointer"
-                                        onClick={clearAllFilters}
-                                    >
-                                        Clear
-                                    </div>
-                                )}
+                {/* Only show filters on /trips */}
+                {!isLikedMode && (
+                    <Column size="col-12 col-md-3 mb-md-4">
+                        <FilterContainer>
+                            <div className="d-flex justify-content-between align-items-center">
+                                <h4 className="ms-1 d-flex align-self-center">Filters</h4>
+                                <div className="d-flex flex-row gap-3">
+                                    {isFilterChangedTowardsDefault && (
+                                        <div
+                                            className="d-flex align-items-center text-danger text-decoration-underline cursor-pointer"
+                                            onClick={clearAllFilters}
+                                        >
+                                            Clear
+                                        </div>
+                                    )}
 
-                                <div
-                                    className="filter-toggle p-0 text-decoration-none"
-                                    onClick={() => setIsFiltersOpen(!isFiltersOpen)}
-                                >
-                                    <i className={`bi ${isFiltersOpen ? "bi-chevron-up" : "bi-chevron-down"}`} style={{ fontSize: "1.5rem", color: "#333" }} />
+                                    <div
+                                        className="filter-toggle p-0 text-decoration-none"
+                                        onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+                                    >
+                                        <i
+                                            className={`bi ${isFiltersOpen ? "bi-chevron-up" : "bi-chevron-down"}`}
+                                            style={{ fontSize: "1.5rem", color: "#333" }}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        {isFiltersOpen ? (
-                            <>
-                                <div className="my-3 ms-1">
-                                    <div
-                                        className="filter-toggle d-flex justify-content-between"
-                                        onClick={() => setIsRadiusOpen(!isRadiusOpen)}
-                                    >
-                                        <p className="fw-semibold mb-1">Radius</p>
-                                        <i className={`bi ${isRadiusOpen ? "bi-chevron-down" : "bi-chevron-up"}`} />
+                            {isFiltersOpen ? (
+                                <>
+                                    <div className="my-3 ms-1">
+                                        <div
+                                            className="filter-toggle d-flex justify-content-between"
+                                            onClick={() => setIsRadiusOpen(!isRadiusOpen)}
+                                        >
+                                            <p className="fw-semibold mb-1">Radius</p>
+                                            <i className={`bi ${isRadiusOpen ? "bi-chevron-down" : "bi-chevron-up"}`} />
+                                        </div>
+
+                                        {isRadiusOpen ? (
+                                            <input
+                                                type="number"
+                                                id="radiusInput"
+                                                value={radius}
+                                                onChange={handleRadiusChange}
+                                                min={0}
+                                                className="form-control rounded-3"
+                                            />
+                                        ) : (
+                                            <hr className="m-0" />
+                                        )}
                                     </div>
 
-                                    {isRadiusOpen ? (
-                                        <input
-                                            type="number"
-                                            id="radiusInput"
-                                            value={radius}
-                                            onChange={handleRadiusChange}
-                                            min={0}
-                                            className="form-control rounded-3"
-                                        />
-                                    ) : (
-                                        <hr className="m-0" />
-                                    )}
-                                </div>
+                                    <div className="mb-3 ms-1">
+                                        <div
+                                            className="filter-toggle d-flex justify-content-between"
+                                            onClick={() => setIsTopLevelCategoriesOpen(!isTopLevelCategoriesOpen)}
+                                        >
+                                            <p className="fw-semibold mb-1">Categories</p>
+                                            <i className={`bi ${isTopLevelCategoriesOpen ? "bi-chevron-down" : "bi-chevron-up"}`} />
+                                        </div>
 
-                                <div className="mb-3 ms-1">
-                                    <div
-                                        className="filter-toggle d-flex justify-content-between"
-                                        onClick={() => setIsTopLevelCategoriesOpen(!isTopLevelCategoriesOpen)}
-                                    >
-                                        <p className="fw-semibold mb-1">Categories</p>
-                                        <i className={`bi ${isTopLevelCategoriesOpen ? "bi-chevron-down" : "bi-chevron-up"}`} />
-                                    </div>
-
-                                    {isTopLevelCategoriesOpen ? (
-                                        <div>
-                                            {Object.keys(TopLevelCategory)
-                                                .filter((key) => isNaN(Number(key)))
-                                                .map((key) => (
-                                                    <div key={key} className="form-check clickable">
-                                                        <input
-                                                            type="checkbox"
-                                                            value={key}
-                                                            id={`topLevel-${key}`}
-                                                            onChange={() =>
-                                                                handleTopLevelCategoryChange(
+                                        {isTopLevelCategoriesOpen ? (
+                                            <div>
+                                                {Object.keys(TopLevelCategory)
+                                                    .filter((key) => isNaN(Number(key)))
+                                                    .map((key) => (
+                                                        <div key={key} className="form-check clickable">
+                                                            <input
+                                                                type="checkbox"
+                                                                value={key}
+                                                                id={`topLevel-${key}`}
+                                                                onChange={() =>
+                                                                    handleTopLevelCategoryChange(
+                                                                        TopLevelCategory[key as keyof typeof TopLevelCategory]
+                                                                    )
+                                                                }
+                                                                checked={topLevelCategories.includes(
                                                                     TopLevelCategory[key as keyof typeof TopLevelCategory]
-                                                                )
-                                                            }
-                                                            checked={topLevelCategories.includes(
-                                                                TopLevelCategory[key as keyof typeof TopLevelCategory]
-                                                            )}
-                                                            className="form-check-input rounded-circle"
-                                                        />
-                                                        <label
-                                                            htmlFor={`topLevel-${key}`}
-                                                            className="form-check-label"
-                                                        >
-                                                            {capitalize(key.toString())}
-                                                        </label>
-                                                    </div>
-                                                ))}
-                                        </div>
-                                    ) : (
-                                        <hr className="m-0" />
-                                    )}
-                                </div>
-
-                                <div className="mb-4">
-                                    <div
-                                        className="filter-toggle d-flex justify-content-between ms-1"
-                                        onClick={() => setIsSubLevelCategoriesOpen(!isSubLevelCategoriesOpen)}
-                                    >
-                                        <p className="fw-semibold mb-1">Sub Categories</p>
-                                        <i className={`bi ${isSubLevelCategoriesOpen ? "bi-chevron-down" : "bi-chevron-up"}`} />
+                                                                )}
+                                                                className="form-check-input rounded-circle"
+                                                            />
+                                                            <label htmlFor={`topLevel-${key}`} className="form-check-label">
+                                                                {capitalize(key.toString())}
+                                                            </label>
+                                                        </div>
+                                                    ))}
+                                            </div>
+                                        ) : (
+                                            <hr className="m-0" />
+                                        )}
                                     </div>
-                                    {isSubLevelCategoriesOpen ? (
-                                        <div style={{ maxHeight: "300px" }} className="overflow-y-auto">
-                                            {isSubLevelLoading ? (
-                                                <p>Loading...</p>
-                                            ) : (
-                                                fetchedSubLevelCategories?.map((subCategory) => (
-                                                    <div key={subCategory.id} className="form-check clickable ms-1">
-                                                        <input
-                                                            type="checkbox"
-                                                            value={subCategory.name}
-                                                            id={`subLevel-${subCategory.name}`}
-                                                            onChange={() =>
-                                                                handleSubLevelCategoryChange(subCategory.name)
-                                                            }
-                                                            checked={subLevelCategories.includes(subCategory.name)}
-                                                            className="form-check-input rounded-circle"
-                                                        />
-                                                        <label
-                                                            htmlFor={`subLevel-${subCategory.name}`}
-                                                            className="form-check-label"
-                                                        >
-                                                            {subCategory.name}
-                                                        </label>
-                                                    </div>
-                                                ))
-                                            )}
+
+                                    <div className="mb-4">
+                                        <div
+                                            className="filter-toggle d-flex justify-content-between ms-1"
+                                            onClick={() => setIsSubLevelCategoriesOpen(!isSubLevelCategoriesOpen)}
+                                        >
+                                            <p className="fw-semibold mb-1">Sub Categories</p>
+                                            <i className={`bi ${isSubLevelCategoriesOpen ? "bi-chevron-down" : "bi-chevron-up"}`} />
                                         </div>
-                                    ) : (
-                                        <hr className="m-0" />
-                                    )}
-                                </div>
+                                        {isSubLevelCategoriesOpen ? (
+                                            <div style={{ maxHeight: "300px" }} className="overflow-y-auto">
+                                                {isSubLevelLoading ? (
+                                                    <p>Loading...</p>
+                                                ) : (
+                                                    fetchedSubLevelCategories?.map((subCategory) => (
+                                                        <div key={subCategory.id} className="form-check clickable ms-1">
+                                                            <input
+                                                                type="checkbox"
+                                                                value={subCategory.name}
+                                                                id={`subLevel-${subCategory.name}`}
+                                                                onChange={() => handleSubLevelCategoryChange(subCategory.name)}
+                                                                checked={subLevelCategories.includes(subCategory.name)}
+                                                                className="form-check-input rounded-circle"
+                                                            />
+                                                            <label htmlFor={`subLevel-${subCategory.name}`} className="form-check-label">
+                                                                {subCategory.name}
+                                                            </label>
+                                                        </div>
+                                                    ))
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <hr className="m-0" />
+                                        )}
+                                    </div>
 
-                                <button
-                                    className={`w-50 btn btn-primary mb-4 ms-1 ${isFilterChanged ? "active" : ""}`}
-                                    onClick={applyFilters}
-                                    disabled={!isFilterChanged}
-                                >
-                                    Apply Filters
-                                </button>
-                            </>
-                        ) : (
-                            <hr className="mb-4 mt-0" />
-                        )}
-                    </FilterContainer>
-                </Column>
-
-                {isFiltersOpen && (
-                    <div className="d-md-none px-3">
-                        <hr />
-                    </div>
+                                    <button
+                                        className={`w-50 btn btn-primary mb-4 ms-1 ${isFilterChanged ? "active" : ""}`}
+                                        onClick={applyFilters}
+                                        disabled={!isFilterChanged}
+                                    >
+                                        Apply Filters
+                                    </button>
+                                </>
+                            ) : (
+                                <hr className="mb-4 mt-0" />
+                            )}
+                        </FilterContainer>
+                    </Column>
                 )}
 
-                <Column size="col-12 col-md-9">
+                {/* Card container occupies full width in liked mode */}
+                <Column size={isLikedMode ? "col-12" : "col-12 col-md-9"}>
                     <CardContainer>
-                        {location ? (
+                        {isLikedMode ? (
                             <>
-                                {isLoading || isFetching ? (
-                                    <Spinner />
-                                ) : error ? (
-                                    <p>Error: {error.message}</p>
+                                {activities && activities.length === 0 ? (
+                                    <p className="mt-5 text-center">No liked activities found...</p>
                                 ) : (
-                                    <div>
-                                        {data && data.items && data.items.length === 0 ? (
-                                            <p className="mt-5 text-center">No activities found with the selected filters...</p>
-                                        ) : (
-                                            <div className="d-flex flex-column gap-3">
-                                                <div className="d-flex justify-content-end">
-                                                    <select
-                                                        value={pageSize}
-                                                        onChange={(e) => handlePageSizeChange(Number(e.target.value))}
-                                                        className="form-select w-auto"
-                                                    >
-                                                        <option value={10}>10</option>
-                                                        <option value={20}>20</option>
-                                                        <option value={50}>50</option>
-                                                    </select>
-                                                </div>
+                                    <div className="row row-cols-1">
+                                        {activities?.map((activity) => (
+                                            <div key={activity.id} className="col mb-4">
+                                                <a
+                                                    href={activity.url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="text-decoration-none"
+                                                >
+                                                    <div className="card animate__animated animate__fadeIn card-hover cursor-pointer">
+                                                        <div className="row g-0">
+                                                            <div className="col-md-4">
+                                                                <img src={activity.image} alt={activity.name} className="card-img-top" />
+                                                            </div>
+                                                            <div className="col-md-8">
+                                                                <div className="card-body justify-content-between">
+                                                                    <h5 className="card-title">{activity.name}</h5>
+                                                                    <p className="card-text">{activity.description}</p>
+                                                                    <div className="d-flex gap-3 justify-content-end">
+                                                                        <i
+                                                                            className={`bi bi-heart${
+                                                                                likedActivities[activity.id] ? "-fill text-danger" : ""
+                                                                            } cursor-pointer fs-4`}
+                                                                            onClick={(e) => handleLikeToggle(activity, e)}
+                                                                        ></i>
+                                                                        <i className="bi bi-chevron-right" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </>
+                        ) : (
+                            // /trips mode – ensure location exists before rendering activities.
+                            location ? (
+                                <>
+                                    {isLoading || isFetching ? (
+                                        <Spinner />
+                                    ) : error ? (
+                                        <p>Error: {error.message}</p>
+                                    ) : (
+                                        <div>
+                                            {data && data.items && data.items.length === 0 ? (
+                                                <p className="mt-5 text-center">
+                                                    No activities found with the selected filters...
+                                                </p>
+                                            ) : (
+                                                <div className="d-flex flex-column gap-3">
+                                                    <div className="d-flex justify-content-end">
+                                                        <select
+                                                            value={pageSize}
+                                                            onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+                                                            className="form-select w-auto"
+                                                        >
+                                                            <option value={10}>10</option>
+                                                            <option value={20}>20</option>
+                                                            <option value={50}>50</option>
+                                                        </select>
+                                                    </div>
 
-                                                <div className="row row-cols-1">
-                                                    {data?.items?.map((activity) => (
-                                                        <div key={activity.id} className="col mb-4">
-                                                            <a href={activity.url} target="_blank" rel="noopener noreferrer" className="text-decoration-none">
-                                                                <div className="card animate__animated animate__fadeIn card-hover cursor-pointer">
-                                                                    <div className="row g-0">
-                                                                        <div className="col-md-4">
-                                                                            <img
-                                                                                src={activity.image}
-                                                                                alt={activity.name}
-                                                                                className="card-img-top"
-                                                                            />
-                                                                        </div>
-                                                                        <div className="col-md-8">
-                                                                            <div className="card-body justify-content-between">
-                                                                                <h5 className="card-title">{activity.name}</h5>
-                                                                                <p className="card-text">{activity.description}</p>
-                                                                                <div className="d-flex gap-3 justify-content-end">
-                                                                                    <i
-                                                                                        className={`bi bi-heart${likedActivities[activity.id] ? "-fill text-danger" : ""} cursor-pointer fs-4`}
-                                                                                        onClick={(e) => handleLikeToggle(activity, e)}
-                                                                                    ></i>
-                                                                                    <i className="bi bi-chevron-right" />
+                                                    <div className="row row-cols-1">
+                                                        {data?.items?.map((activity) => (
+                                                            <div key={activity.id} className="col mb-4">
+                                                                <a
+                                                                    href={activity.url}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="text-decoration-none"
+                                                                >
+                                                                    <div className="card animate__animated animate__fadeIn card-hover cursor-pointer">
+                                                                        <div className="row g-0">
+                                                                            <div className="col-md-4">
+                                                                                <img
+                                                                                    src={activity.image}
+                                                                                    alt={activity.name}
+                                                                                    className="card-img-top"
+                                                                                />
+                                                                            </div>
+                                                                            <div className="col-md-8">
+                                                                                <div className="card-body justify-content-between">
+                                                                                    <h5 className="card-title">{activity.name}</h5>
+                                                                                    <p className="card-text">{activity.description}</p>
+                                                                                    <div className="d-flex gap-3 justify-content-end">
+                                                                                        <i
+                                                                                            className={`bi bi-heart${
+                                                                                                likedActivities[activity.id] ? "-fill text-danger" : ""
+                                                                                            } cursor-pointer fs-4`}
+                                                                                            onClick={(e) => handleLikeToggle(activity, e)}
+                                                                                        ></i>
+                                                                                        <i className="bi bi-chevron-right" />
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
                                                                         </div>
-
                                                                     </div>
-                                                                </div>
                                                                 </a>
                                                             </div>
                                                         ))}
@@ -458,13 +535,14 @@ const PageContainer: React.FunctionComponent = ({ setActivities }) => {
                                                             &gt;
                                                         </button>
                                                     </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </>
-                        ) : (
-                            <p>Ensure location services are enabled in your browser for accurate results.</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </>
+                            ) : (
+                                <p>Ensure location services are enabled in your browser for accurate results.</p>
+                            )
                         )}
                     </CardContainer>
                 </Column>
