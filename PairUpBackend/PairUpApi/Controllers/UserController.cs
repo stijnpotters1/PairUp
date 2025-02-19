@@ -28,11 +28,6 @@ public class UserController : ControllerBase
     {
         var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
 
-        if (userIdClaim == null)
-        {
-            throw new UnauthorizedToMakeThisRequestException();
-        }
-        
         User user = await _repository.GetByIdAsync(id, Guid.Parse(userIdClaim));
         return Ok(_service.ConvertToResponse(user));
     }
@@ -52,11 +47,6 @@ public class UserController : ControllerBase
     {
         var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
 
-        if (userIdClaim == null)
-        {
-            throw new UnauthorizedToMakeThisRequestException();
-        }
-        
         User user = await _repository.UpdateAsync(id, _service.ConvertToEntity(userRequest), Guid.Parse(userIdClaim));
         return Ok(_service.ConvertToResponse(user));
     }
@@ -66,10 +56,6 @@ public class UserController : ControllerBase
     public async Task<ActionResult<bool>> DeleteUser(Guid id)
     {
         var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
-        if (userIdClaim == null)
-        {
-            throw new UnauthorizedToMakeThisRequestException();
-        }
 
         Guid userIdGuid = Guid.Parse(userIdClaim);
 

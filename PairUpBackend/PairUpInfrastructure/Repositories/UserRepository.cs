@@ -33,7 +33,7 @@ public class UserRepository : IUserRepository
 
         if (!isAdmin && requestingUser.Id != id)
         {
-            throw new UnauthorizedToMakeThisRequestException();
+            throw new ForbiddenToMakeThisRequestException();
         }
 
         User? user = await _context.Users
@@ -98,7 +98,7 @@ public class UserRepository : IUserRepository
 
         if (!isAdmin && requestingUser.Id != id)
         {
-            throw new UnauthorizedToMakeThisRequestException();
+            throw new ForbiddenToMakeThisRequestException();
         }
 
         if (!isAdmin)
@@ -153,7 +153,7 @@ public class UserRepository : IUserRepository
 
         if (!isAdmin && !requestingUser.Id.Equals(targetUser.Id))
         {
-            throw new UnauthorizedToMakeThisRequestException();
+            throw new ForbiddenToMakeThisRequestException();
         }
 
         _context.Users.Remove(targetUser);

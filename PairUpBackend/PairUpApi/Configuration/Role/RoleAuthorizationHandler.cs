@@ -11,7 +11,6 @@ public class RoleAuthorizationHandler : AuthorizationHandler<RoleRequirement>
 
     protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, RoleRequirement requirement)
     {
-        // Fetch userId claim
         var userIdClaim = context.User.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
 
         if (userIdClaim == null)
