@@ -1,4 +1,6 @@
-﻿namespace PairUpApi.Configuration;
+﻿using PairUpScraper.Scrapers.DagjeWegScraper;
+
+namespace PairUpApi.Configuration;
 
 public static class ServiceContainer
 {
@@ -53,7 +55,8 @@ public static class ServiceContainer
         // Scraper registration
         services.AddScoped<BaseWebScraper, BijzonderPlekjeAccommodationScraper>();
         services.AddScoped<BaseWebScraper, BijzonderPlekjeActivityScraper>();
-        
+        services.AddScoped<BaseWebScraper, DagjeWegActivityScraper>();
+
         // Register Background Service (Scraper)
         services.AddHostedService<ScraperBackgroundService>();
 
