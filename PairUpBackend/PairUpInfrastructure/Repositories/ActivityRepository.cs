@@ -108,8 +108,7 @@ public class ActivityRepository : IActivityRepository
     
         return query;
     }
-
-
+    
     private List<Activity> FilterActivitiesByDistance(List<Activity> activities, double userLatitude, double userLongitude, int radius)
     {
         return activities.Where(a =>

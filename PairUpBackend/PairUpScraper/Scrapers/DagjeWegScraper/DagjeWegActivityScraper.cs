@@ -20,7 +20,7 @@ public class DagjeWegActivityScraper : BaseWebScraper
             
             while (true)
             {
-                var baseUrl = $"https://www.dagjeweg.nl/zoeken?page=1";
+                var baseUrl = $"https://www.dagjeweg.nl/zoeken?page={page}";
                 driver.Navigate().GoToUrl(baseUrl);
                 
                 await Task.Delay(2000);
@@ -34,6 +34,8 @@ public class DagjeWegActivityScraper : BaseWebScraper
                 
                 if (links.Count < 15)
                     break;
+                
+                Console.WriteLine("added new links to the link list");
                 
                 allLinks.AddRange(links);
                 page++;
